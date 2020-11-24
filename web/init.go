@@ -1,8 +1,12 @@
 package web
 
 import (
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/juju/loggo"
+	"github.com/markbates/goth"
+	"github.com/markbates/goth/gothic"
+	"github.com/markbates/goth/providers/discord"
 	"github.com/markbates/pkger"
 	"gopkg.in/boj/redistore.v1"
 	"html/template"
@@ -12,6 +16,24 @@ import (
 	"os"
 	"strings"
 )
+
+type contextKey int
+
+type templateAlert struct {
+	Header string
+	Text   string
+}
+
+type templateCommon struct {
+	AlertError   templateAlert
+	AlertSuccess templateAlert
+	AlertWarn    templateAlert
+
+	PageTitle string
+}
+
+const SessionKey contextKey = 0
+const GothUserKey contextKey = 1
 
 var (
 	logger    *loggo.Logger
@@ -35,17 +57,32 @@ func Init(conf *config.Config) error {
 	}
 	templates = t
 
-	// Setup Router
-	r := mux.NewRouter()
-
 	// Fetch new store.
 	store, err = redistore.NewRediStoreWithDB(10, "tcp", conf.RedisAddress, conf.RedisPassword, "1", []byte(conf.CookieSecret))
 	if err != nil {
 		return err
 	}
 
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(pkger.Dir("/web/static"))))
+	// Init goth
+	gothic.Store = store
+	goth.UseProviders(
+		discord.New(
+			conf.DiscordKey,
+			conf.DiscordSecret,
+			fmt.Sprintf("https://%s/auth/discord/callback", conf.ExtHostname),
+			discord.ScopeIdentify, discord.ScopeEmail),
+	)
 
+	// Setup Router
+	r := mux.NewRouter()
+
+	// Unprotected Pages
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(pkger.Dir("/web/static"))))
+	r.HandleFunc("/auth/{provider}", GetAuthProvider).Methods("GET")
+	r.HandleFunc("/auth/{provider}/callback", GetAuthProviderCallback).Methods("GET")
+	r.HandleFunc("/login", GetLogin).Methods("GET")
+
+	// Protected Pages
 	r.HandleFunc("/", GetHome).Methods("GET")
 
 	go func() {

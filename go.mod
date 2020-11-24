@@ -12,6 +12,7 @@ require (
 	github.com/juju/loggo v0.0.0-20200526014432-9ce3a2e09b5e
 	github.com/lib/pq v1.8.0
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
+	github.com/markbates/goth v1.66.0
 	github.com/markbates/pkger v0.17.1
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect

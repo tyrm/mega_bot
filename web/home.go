@@ -2,9 +2,15 @@ package web
 
 import "net/http"
 
-func GetHome(w http.ResponseWriter, r *http.Request) {
+type HomeTemplate struct {
+	templateCommon
+}
 
-	err := templates.ExecuteTemplate(w, "home", nil)
+func GetHome(w http.ResponseWriter, r *http.Request) {
+	tmplVars := HomeTemplate{}
+	tmplVars.PageTitle = "Home"
+
+	err := templates.ExecuteTemplate(w, "home", tmplVars)
 	if err != nil {
 		logger.Errorf("could not render home template: %s", err.Error())
 	}

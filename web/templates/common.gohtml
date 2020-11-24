@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
-    <title>Starter Template · Bootstrap</title>
+    <title>{{.PageTitle}}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/static/vendor/bootstrap-4.5.3-cerulean.min.css" rel="stylesheet" integrity="sha384-mUmCmzW7iDM1B23t+9wTAPdZzabcxrgWTtz7iHs+6QOPBl6rMS3fHSNqONSgMaJI" crossorigin="anonymous">
@@ -24,7 +24,7 @@
     <link href="/static/css/default.css" rel="stylesheet">
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="navbar-brand" ><img src="/static/img/noun_bot_white.svg" height="25" id="brand_icon"> Megabot</div>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -56,9 +56,33 @@
         </form>
     </div>
 </nav>
-
+{{- if .AlertSuccess.Text }}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{if .AlertSuccess.Header}}<strong>{{.AlertSuccess.Header}}</strong> {{end}}{{.AlertSuccess.Text}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+{{- end }}
+{{- if .AlertError.Text }}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{if .AlertError.Header}}<strong>{{.AlertError.Header}}</strong> {{end}}{{.AlertError.Text}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+{{- end }}
+{{- if .AlertWarn.Text }}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{if .AlertWarn.Header}}<strong>{{.AlertWarn.Header}}</strong> {{end}}{{.AlertWarn.Text}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+{{- end }}
 <div role="main" class="container">
 {{ end }}
+
 {{ define "footer" }}
 </div><!-- /.container -->
 <script src="/static/vendor/jquery-3.5.1-dist/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
@@ -66,3 +90,4 @@
 </body>
 </html>
 {{ end }}
+

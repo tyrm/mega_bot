@@ -32,7 +32,7 @@ func ReadEnabledResponderMatchers() ([]*ResponderMatcher, error) {
 	start := time.Now()
 	var rms []*ResponderMatcher
 
-	err := client.Select(&rms, "SELECT * FROM responder_matcher WHERE enabled = TRUE ORDER BY id;")
+	err := client.Select(&rms, "SELECT * FROM responder_matchers WHERE enabled = TRUE ORDER BY id;")
 	if err != nil {
 		return nil, err
 	}
