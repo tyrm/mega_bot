@@ -1,0 +1,68 @@
+{{ define "header" -}}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>Starter Template · Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap-4.5.3-cerulean.min.css" rel="stylesheet" integrity="sha384-mUmCmzW7iDM1B23t+9wTAPdZzabcxrgWTtz7iHs+6QOPBl6rMS3fHSNqONSgMaJI" crossorigin="anonymous">
+    <link href="/static/css/fontawesome-free-5.13.0-all.min.css" rel="stylesheet" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+
+    <!-- Favicons -->
+    <!-- link rel="apple-touch-icon" href="/static/img/favicons/apple-touch-icon.png" sizes="180x180" -->
+    <!-- link rel="icon" href="/static/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png" -->
+    <!-- link rel="icon" href="/static/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png" -->
+    <!-- link rel="manifest" href="/static/img/favicons/manifest.json" -->
+    <!-- link rel="mask-icon" href="/static/img/favicons/safari-pinned-tab.svg" color="#2b3e50" -->
+    <!-- link rel="icon" href="/static/img/favicons/favicon.ico" -->
+    <!-- meta name="msapplication-config" content="/static/img/favicons/browserconfig.xml" -->
+    <meta name="theme-color" content="#2b3e50">
+
+    <link href="/static/css/default.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#"><i class="fas fa-robot"></i> Megabot</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                <div class="dropdown-menu" aria-labelledby="dropdown01">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+
+<div role="main" class="container">
+{{ end }}
+{{ define "footer" }}
+</div><!-- /.container -->
+<script src="/static/js/jquery-3.5.1.slim.min.js" integrity="sha384-A0TP5ZGm/SFVCtyqyZTYzpCkQq0diHNiHyWSZeKr6Zaxe/tkgrLcn3J391PzCUdN" crossorigin="anonymous"></script>
+<script src="/static/js/bootstrap-4.5.3.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+</body>
+</html>
+{{ end }}

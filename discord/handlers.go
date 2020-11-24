@@ -40,8 +40,8 @@ func handleMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		*chanResponderRequest <- &rreq
 	}()
 
-	r := []rune(m.Content)
-	logger.Debugf("%d", r[0])
+	//r := []rune(m.Content)
+	//l1ogger.Debugf("%d", r[0])
 }
 
 func handlePresenceUpdate(s *discordgo.Session, m *discordgo.PresenceUpdate) {

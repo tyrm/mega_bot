@@ -8,6 +8,7 @@ import (
 	"mega_bot/discord"
 	"mega_bot/models"
 	"mega_bot/responder"
+	"mega_bot/web"
 	"os"
 	"os/signal"
 	"syscall"
@@ -52,6 +53,12 @@ func main() {
 		return
 	}
 
+	err = web.Init(conf)
+	if err != nil {
+		logger.Errorf("unable to start webserver: %s", err.Error())
+		return
+	}
+
 	// Init Bot Connections
 	if conf.DiscordToken != "" {
 		err = discord.Init(conf, &chanResponderRequest)
@@ -60,8 +67,11 @@ func main() {
 		}
 	}
 
+
 	// Wait for SIGINT and SIGTERM (HIT CTRL-C)
 	nch := make(chan os.Signal)
 	signal.Notify(nch, syscall.SIGINT, syscall.SIGTERM)
 	logger.Infof("%s", <-nch)
+
+	web.Close()
 }

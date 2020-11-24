@@ -11,5 +11,6 @@ CREATE TABLE "public"."responder_matcher" (
 )
 ;
 
+
 -- +migrate Down
 DROP TABLE "public"."responder_matcher";
