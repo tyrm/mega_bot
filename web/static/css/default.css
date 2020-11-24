@@ -1,3 +1,13 @@
 body {
+}
+
+#brand_icon {
+    transform: translateY(-2px);
+}
+
+.container {
+    box-shadow: 2px 2px 4px #000000;
     padding-top: 5rem;
+    padding-bottom: 15px;
+
 }
