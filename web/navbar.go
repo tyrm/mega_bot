@@ -11,10 +11,10 @@ var NavbarTemplate = []templateNavbarNode{
 		URL:      "/",
 	},
 	{
-		Text:     "Files",
-		MatchStr: "^/web/files/.*$",
-		FAIcon:   "file",
-		URL:      "/web/files/",
+		Text:     "Responder",
+		MatchStr: "^/responder/.*$",
+		FAIcon:   "comment-alt",
+		URL:      "/responder/",
 	},
 	{
 		Text:   "Admin",
@@ -56,6 +56,44 @@ var NavbarTemplate = []templateNavbarNode{
 	},
 }
 
+var NavbarAdminTemplate = templateNavbarNode{
+	Text:   "Admin",
+	FAIcon: "hammer",
+	URL:    "#",
+	Children: []*templateNavbarNode{
+		{
+			Text:     "Job Runner",
+			MatchStr: "^/web/admin/jobrunner/.*$",
+			FAIcon:   "clock",
+			URL:      "/web/admin/jobrunner/",
+		},
+		{
+			Text:     "Oauth Clients",
+			MatchStr: "^/web/admin/oauth-clients/.*$",
+			FAIcon:   "desktop",
+			URL:      "/web/admin/oauth-clients/",
+			Disabled: true,
+		},
+		{
+			Text:     "Registry",
+			MatchStr: "^/web/admin/registry/.*$",
+			FAIcon:   "book",
+			URL:      "/web/admin/registry/",
+		},
+		{
+			Text:     "Users",
+			MatchStr: "^/web/admin/users/.*$",
+			FAIcon:   "user",
+			URL:      "/web/admin/users/",
+		},
+		{
+			Text:     "Something else here",
+			FAIcon:   "paw",
+			URL:      "#",
+			Disabled: true,
+		},
+	},
+}
 
 func makeNavbar(path string) (navbar *[]templateNavbarNode) {
 	var newNavbar []templateNavbarNode

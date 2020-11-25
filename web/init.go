@@ -3,14 +3,15 @@ package web
 import (
 	"encoding/gob"
 	"fmt"
+	"github.com/BurntSushi/toml"
 	"github.com/gorilla/mux"
 	"github.com/juju/loggo"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/discord"
 	"github.com/markbates/pkger"
-	"github.com/tdewolff/minify/v2"
-	"github.com/tdewolff/minify/v2/html"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"golang.org/x/text/language"
 	"gopkg.in/boj/redistore.v1"
 	"html/template"
 	"mega_bot/config"
@@ -23,15 +24,13 @@ const SessionKey contextKey = 0
 const UserKey contextKey = 1
 
 var (
-	logger    *loggo.Logger
-	minifier  *minify.M
-	store     *redistore.RediStore
-	templates *template.Template
+	langBundle *i18n.Bundle
+	logger     *loggo.Logger
+	store      *redistore.RediStore
+	templates  *template.Template
 )
 
 type contextKey int
-
-
 
 func Close() {
 	store.Close()
@@ -49,9 +48,14 @@ func Init(conf *config.Config) error {
 	}
 	templates = t
 
-	// Load Minify
-	minifier = minify.New()
-	minifier.AddFunc("text/html", html.Minify)
+	// Load Languages
+	bundle := i18n.NewBundle(language.English)
+	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	// No need to load active.en.toml since we are providing default translations.
+	// bundle.MustLoadMessageFile("active.en.toml")
+	bundle.MustLoadMessageFile("active.es.toml")
+
+	langBundle = bundle
 
 	// Fetch new store.
 	store, err = redistore.NewRediStoreWithDB(10, "tcp", conf.RedisAddress, conf.RedisPassword, "1", []byte(conf.CookieSecret))
@@ -105,3 +109,4 @@ func Init(conf *config.Config) error {
 
 	return nil
 }
+

@@ -3,6 +3,7 @@ module mega_bot
 go 1.14
 
 require (
+	github.com/BurntSushi/toml v0.3.1
 	github.com/bwmarrin/discordgo v0.22.0
 	github.com/garyburd/redigo v1.6.2 // indirect
 	github.com/gorilla/mux v1.7.3
@@ -16,10 +17,12 @@ require (
 	github.com/markbates/goth v1.66.0
 	github.com/markbates/pkger v0.17.1
 	github.com/mattn/go-colorable v0.1.8 // indirect
+	github.com/nicksnyder/go-i18n/v2 v2.1.1
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/rubenv/sql-migrate v0.0.0-20200616145509-8d140a17f351
-	github.com/tdewolff/minify/v2 v2.9.10
+	golang.org/x/text v0.3.4
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/boj/redistore.v1 v1.0.0-20160128113310-fc113767cd6b
 	gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

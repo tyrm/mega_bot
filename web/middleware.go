@@ -23,7 +23,6 @@ func Middleware(next http.Handler) http.Handler {
 		var user = models.User{}
 		var ok bool
 		if user, ok = val.(models.User); ok {
-			logger.Debugf("us user: %#v", user)
 			ctx = context.WithValue(ctx, UserKey, &user)
 		}
 
