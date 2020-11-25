@@ -1,7 +1,7 @@
 -- +migrate Up
 CREATE TABLE "public"."users" (
     id uuid DEFAULT uuid_generate_v4 (),
-    email character varying NOT NULL,
+    email character varying NOT NULL UNIQUE,
     password character varying,
     nick character varying,
     authorized boolean NOT NULL DEFAULT false,

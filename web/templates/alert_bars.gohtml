@@ -1,5 +1,5 @@
 {{define "alert_bars"}}
-    {{- if .AlertSuccess.Text }}
+    {{- if .AlertSuccess }}
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{if .AlertSuccess.Header}}<strong>{{.AlertSuccess.Header}}</strong> {{end}}{{.AlertSuccess.Text}}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -7,7 +7,7 @@
             </button>
         </div>
     {{- end }}
-    {{- if .AlertError.Text }}
+    {{- if .AlertError }}
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{if .AlertError.Header}}<strong>{{.AlertError.Header}}</strong> {{end}}{{.AlertError.Text}}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -15,7 +15,7 @@
             </button>
         </div>
     {{- end }}
-    {{- if .AlertWarn.Text }}
+    {{- if .AlertWarn }}
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             {{if .AlertWarn.Header}}<strong>{{.AlertWarn.Header}}</strong> {{end}}{{.AlertWarn.Text}}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">

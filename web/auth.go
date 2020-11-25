@@ -129,7 +129,53 @@ func authProviderCallback(w http.ResponseWriter, r *http.Request, gu goth.User) 
 		}
 
 		// create user account
+		newUser := models.User{}
+		newUser.Email = gu.Email
+		if gu.NickName != "" {
+			newUser.Nick = gu.NickName
+		} else if gu.Name != "" {
+			newUser.Nick = gu.Name
+		}
+		newUser.Authorized = false
+		newUser.Admin = false
 
+		err = models.CreateUser(&newUser)
+		if err != nil {
+			msg := fmt.Sprintf("could not create new user: %s", err.Error())
+			logger.Errorf(msg)
+			http.Error(w, msg, http.StatusInternalServerError)
+			return
+		}
+
+		logger.Debugf("created new user: %#v", newUser)
+
+		// login user
+		us.Values["user"] = &newUser
+
+		// connect account
+		newCa := models.ConnectedAccount{
+			Provider: gu.Provider,
+			ProviderUserID: gu.UserID,
+			UserID: newUser.ID,
+		}
+
+		err = models.CreateConnectedAccount(&newCa)
+		if err != nil {
+			msg := fmt.Sprintf("could not create new connected account: %s", err.Error())
+			logger.Errorf(msg)
+			http.Error(w, msg, http.StatusInternalServerError)
+			return
+		}
+
+		err = us.Save(r, w)
+		if err != nil {
+			msg := fmt.Sprintf("could not save session: %s", err.Error())
+			logger.Errorf(msg)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/", http.StatusFound)
 	}
 
 	http.Error(w, "unknown state", http.StatusInternalServerError)

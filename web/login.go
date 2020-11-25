@@ -11,7 +11,13 @@ type LoginTemplate struct {
 }
 
 func GetLogin(w http.ResponseWriter, r *http.Request) {
-	tmplVars := LoginTemplate{}
+	tmplVars := &LoginTemplate{}
+	err := initTemplate(w, r, tmplVars)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	tmplVars.PageTitle = "Login"
 
 	if r.Context().Value(UserKey) != nil {
@@ -20,7 +26,7 @@ func GetLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 
-	err := templates.ExecuteTemplate(w, "login", tmplVars)
+	err = templates.ExecuteTemplate(w, "login", tmplVars)
 	if err != nil {
 		logger.Errorf("could not render home template: %s", err.Error())
 	}

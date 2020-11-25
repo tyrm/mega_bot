@@ -18,6 +18,18 @@ type User struct {
 	UpdatedAt time.Time `db:"updated_at",json:"updated_at"`
 }
 
+func CreateUser(u *User) error {
+	// Timing
+	start := time.Now()
+	defer logger.Tracef("CreateUser() took %s", time.Since(start))
+
+	err := client.
+		QueryRowx(`INSERT INTO public.users(email, password, nick, authorized, admin) 
+			VALUES (:email, :password, :nick, :authorized, :admin) RETURNING id, created_at, updated_at;`, &u).
+		Scan(&u.ID, &u.CreatedAt, &u.UpdatedAt)
+	return err
+}
+
 func ReadUser(id string) (*User, error) {
 	var user User
 

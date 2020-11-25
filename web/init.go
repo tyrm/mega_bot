@@ -81,7 +81,7 @@ func Init(conf *config.Config) error {
 
 	// Protected Pages
 	protected := r.PathPrefix("/").Subrouter()
-	protected.Use(MiddlewareRequireAuth)
+	//protected.Use(MiddlewareRequireAuth)
 	protected.HandleFunc("/", GetHome).Methods("GET")
 
 	go func() {

@@ -8,7 +8,7 @@ type HomeTemplate struct {
 
 func GetHome(w http.ResponseWriter, r *http.Request) {
 	tmplVars := &HomeTemplate{}
-	err := initTemplate(r, tmplVars)
+	err := initTemplate(w, r, tmplVars)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
