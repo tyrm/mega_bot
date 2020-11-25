@@ -7,10 +7,16 @@ type HomeTemplate struct {
 }
 
 func GetHome(w http.ResponseWriter, r *http.Request) {
-	tmplVars := HomeTemplate{}
+	tmplVars := &HomeTemplate{}
+	err := initTemplate(r, tmplVars)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	tmplVars.PageTitle = "Home"
 
-	err := templates.ExecuteTemplate(w, "home", tmplVars)
+	err = templates.ExecuteTemplate(w, "home", tmplVars)
 	if err != nil {
 		logger.Errorf("could not render home template: %s", err.Error())
 	}

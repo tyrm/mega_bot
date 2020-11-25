@@ -1,6 +1,10 @@
 package web
 
-import "net/http"
+import (
+	"mega_bot/models"
+	"net/http"
+	"reflect"
+)
 
 type LoginTemplate struct {
 	templateCommon
@@ -9,6 +13,12 @@ type LoginTemplate struct {
 func GetLogin(w http.ResponseWriter, r *http.Request) {
 	tmplVars := LoginTemplate{}
 	tmplVars.PageTitle = "Login"
+
+	if r.Context().Value(UserKey) != nil {
+		user := r.Context().Value(UserKey).(*models.User)
+		logger.Debugf("user(%s) %#v", reflect.TypeOf(user), user)
+	}
+
 
 	err := templates.ExecuteTemplate(w, "login", tmplVars)
 	if err != nil {

@@ -8,38 +8,28 @@ import (
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/discord"
 	"github.com/markbates/pkger"
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/html"
 	"gopkg.in/boj/redistore.v1"
 	"html/template"
-	"io/ioutil"
 	"mega_bot/config"
 	"net/http"
-	"os"
-	"strings"
+	"time"
+)
+
+const SessionKey contextKey = 0
+const UserKey contextKey = 1
+
+var (
+	logger    *loggo.Logger
+	minifier  *minify.M
+	store     *redistore.RediStore
+	templates *template.Template
 )
 
 type contextKey int
 
-type templateAlert struct {
-	Header string
-	Text   string
-}
 
-type templateCommon struct {
-	AlertError   templateAlert
-	AlertSuccess templateAlert
-	AlertWarn    templateAlert
-
-	PageTitle string
-}
-
-const SessionKey contextKey = 0
-const GothUserKey contextKey = 1
-
-var (
-	logger    *loggo.Logger
-	store     *redistore.RediStore
-	templates *template.Template
-)
 
 func Close() {
 	store.Close()
@@ -56,6 +46,10 @@ func Init(conf *config.Config) error {
 		return err
 	}
 	templates = t
+
+	// Load Minify
+	minifier = minify.New()
+	minifier.AddFunc("text/html", html.Minify)
 
 	// Fetch new store.
 	store, err = redistore.NewRediStoreWithDB(10, "tcp", conf.RedisAddress, conf.RedisPassword, "1", []byte(conf.CookieSecret))
@@ -75,53 +69,33 @@ func Init(conf *config.Config) error {
 
 	// Setup Router
 	r := mux.NewRouter()
+	r.Use(Middleware)
+
+	// Static Files
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(pkger.Dir("/web/static"))))
 
 	// Unprotected Pages
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(pkger.Dir("/web/static"))))
 	r.HandleFunc("/auth/{provider}", GetAuthProvider).Methods("GET")
 	r.HandleFunc("/auth/{provider}/callback", GetAuthProviderCallback).Methods("GET")
 	r.HandleFunc("/login", GetLogin).Methods("GET")
 
 	// Protected Pages
-	r.HandleFunc("/", GetHome).Methods("GET")
+	protected := r.PathPrefix("/").Subrouter()
+	protected.Use(MiddlewareRequireAuth)
+	protected.HandleFunc("/", GetHome).Methods("GET")
 
 	go func() {
-		err := http.ListenAndServe(":9000", r)
+		srv := &http.Server{
+			Handler:      r,
+			Addr:         ":9000",
+			WriteTimeout: 15 * time.Second,
+			ReadTimeout:  15 * time.Second,
+		}
+		err := srv.ListenAndServe()
 		if err != nil {
 			logger.Errorf("Could not start web server %s", err.Error())
 		}
 	}()
 
 	return nil
-}
-
-func compileTemplates(dir string) (*template.Template, error) {
-	const fun = "compileTemplates"
-	tpl := template.New("")
-
-	err := pkger.Walk(dir, func(path string, info os.FileInfo, _ error) error {
-		if info.IsDir() || !strings.HasSuffix(path, ".gohtml") {
-			return nil
-		}
-		f, err := pkger.Open(path)
-		if err != nil {
-			logger.Errorf("could not open pkger path %s: %s", path, err.Error())
-			return err
-		}
-		// Now read it.
-		sl, err := ioutil.ReadAll(f)
-		if err != nil {
-			logger.Errorf("could not read pkger file %s: %s", path, err.Error())
-		}
-
-		// It can now be parsed as a string.
-		_, err = tpl.Parse(string(sl))
-		if err != nil {
-			logger.Errorf("could not open parse template %s: %s", path, err.Error())
-			return err
-		}
-
-		return nil
-	})
-	return tpl, err
 }
