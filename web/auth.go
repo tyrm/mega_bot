@@ -132,9 +132,11 @@ func authProviderCallback(w http.ResponseWriter, r *http.Request, gu goth.User) 
 		newUser := models.User{}
 		newUser.Email = gu.Email
 		if gu.NickName != "" {
-			newUser.Nick = gu.NickName
+			newUser.Nick.String = gu.NickName
+			newUser.Nick.Valid = true
 		} else if gu.Name != "" {
-			newUser.Nick = gu.Name
+			newUser.Nick.String = gu.Name
+			newUser.Nick.Valid = true
 		}
 		newUser.Authorized = false
 		newUser.Admin = false

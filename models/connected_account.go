@@ -22,7 +22,8 @@ func CreateConnectedAccount(ca *ConnectedAccount) error {
 	defer logger.Tracef("CreateConnectedAccount() took %s", time.Since(start))
 
 	err := client.
-		QueryRowx(`INSERT INTO public.connected_accounts(provider, provider_user_id, user_id) VALUES (:provider, :provider_user_id, :user_id) RETURNING id, created_at, updated_at;`, &ca).
+		QueryRowx(`INSERT INTO public.connected_accounts(provider, provider_user_id, user_id)
+			VALUES ($1, $2, $3) RETURNING id, created_at, updated_at;`, ca.Provider, ca.ProviderUserID, ca.UserID).
 		Scan(&ca.ID, &ca.CreatedAt, &ca.UpdatedAt)
 	return err
 }

@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/gob"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/juju/loggo"
@@ -13,6 +14,7 @@ import (
 	"gopkg.in/boj/redistore.v1"
 	"html/template"
 	"mega_bot/config"
+	"mega_bot/models"
 	"net/http"
 	"time"
 )
@@ -57,6 +59,9 @@ func Init(conf *config.Config) error {
 		return err
 	}
 
+	// Register models for GOB
+	gob.Register(models.User{})
+
 	// Init goth
 	gothic.Store = store
 	goth.UseProviders(
@@ -78,10 +83,11 @@ func Init(conf *config.Config) error {
 	r.HandleFunc("/auth/{provider}", GetAuthProvider).Methods("GET")
 	r.HandleFunc("/auth/{provider}/callback", GetAuthProviderCallback).Methods("GET")
 	r.HandleFunc("/login", GetLogin).Methods("GET")
+	r.HandleFunc("/logout", GetLogout).Methods("GET")
 
 	// Protected Pages
 	protected := r.PathPrefix("/").Subrouter()
-	//protected.Use(MiddlewareRequireAuth)
+	protected.Use(MiddlewareRequireAuth)
 	protected.HandleFunc("/", GetHome).Methods("GET")
 
 	go func() {

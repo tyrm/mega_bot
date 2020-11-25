@@ -6,11 +6,11 @@ import (
 )
 
 type User struct {
-	Email      string `db:"email",json:"email"`
-	Password   string `db:"password",json:"password"`
-	Nick       string `db:"nick",json:"nick"`
-	Authorized bool   `db:"authorized",json:"authorized"`
-	Admin      bool   `db:"admin",json:"admin"`
+	Email      string         `db:"email",json:"email"`
+	Password   sql.NullString `db:"password",json:"password"`
+	Nick       sql.NullString `db:"nick",json:"nick"`
+	Authorized bool           `db:"authorized",json:"authorized"`
+	Admin      bool           `db:"admin",json:"admin"`
 
 	// metadata
 	ID        string    `db:"id",json:"id"`
@@ -25,8 +25,8 @@ func CreateUser(u *User) error {
 
 	err := client.
 		QueryRowx(`INSERT INTO public.users(email, password, nick, authorized, admin) 
-			VALUES (:email, :password, :nick, :authorized, :admin) RETURNING id, created_at, updated_at;`, &u).
-		Scan(&u.ID, &u.CreatedAt, &u.UpdatedAt)
+        	VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, updated_at;`, u.Email, u.Password, u.Nick,
+        	u.Authorized, u.Admin).Scan(&u.ID, &u.CreatedAt, &u.UpdatedAt)
 	return err
 }
 
