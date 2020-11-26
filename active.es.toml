@@ -1,4 +1,9 @@
-[TitleHome]
+[HomeTitle]
 description = "Title of the home page."
 hash = "sha1-10a9c0b860ec763166a03868c2faf517e1b3da41"
+other = "Inicio"
+
+[NavebarHome]
+description = "Home button on Navbar"
+hash = "sha1-b737a5694fcaa640dc74ab4db006eb398e989ca9"
 other = "Inicio"

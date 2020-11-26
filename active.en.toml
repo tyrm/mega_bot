@@ -1,3 +1,7 @@
+[HomeTitle]
+description = "Title of the home page."
+other = "Home"
+
 [NavbarAdmin]
 description = "Admin button on Navbar"
 other = "Admin"
@@ -14,6 +18,14 @@ other = "Responder"
 description = "Home button on Navbar"
 other = "Home"
 
-[TitleHome]
-description = "Title of the home page."
-other = "Home"
+[PurgatoryHeader]
+description = "Header of the purgatory page."
+other = "Purgatory"
+
+[PurgatoryText]
+description = "Text of the purgatory page."
+other = "If you're seeing this page you're not approved to use MegaBot. Please contact the administrator."
+
+[PurgatoryTitle]
+description = "Title of the purgatory page."
+other = "Purgatory"
