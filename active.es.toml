@@ -25,8 +25,8 @@ other = "Inicio"
 
 [PurgatoryHeader]
 description = "Header of the purgatory page."
-hash = "sha1-b92c690754172e1984bfc95c0c554de99b6f0406"
-other = "Purgatorio"
+hash = "sha1-9a2515cbf2c588eb1e693cdee69e8a22361a5bf8"
+other = "Purgatorio {{.GhostEmoji}}"
 
 [PurgatoryTitle]
 description = "Title of the purgatory page."

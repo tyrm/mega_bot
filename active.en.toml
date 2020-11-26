@@ -48,7 +48,7 @@ other = "Home"
 
 [PurgatoryHeader]
 description = "Header of the purgatory page."
-other = "Purgatory"
+other = "Purgatory {{.GhostEmoji}}"
 
 [PurgatoryText]
 description = "Text of the purgatory page."

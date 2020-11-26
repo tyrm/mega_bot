@@ -19,7 +19,7 @@ Every user in a group has 5 kudos a day to give to other users when they're awes
 MegaBot uses environment variables for config.
 ### Required
 #### COOKIE_SECRET
-Used to encrypt cookie data. should be a big long *uwu* random string. Once you sit it, it can never be changed without your users REALLY disliking you. 
+Used to encrypt cookie data. should be a big long *uwu* random string. Once you set it, it can never be changed without your users REALLY disliking you. 
 
 #### DB_ENGINE
 Postgres connection string.
