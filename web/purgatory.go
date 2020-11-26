@@ -46,7 +46,10 @@ func GetPurgatory(w http.ResponseWriter, r *http.Request) {
 		DefaultMessage: &i18n.Message{
 			ID:    "PurgatoryHeader",
 			Description: "Header of the purgatory page.",
-			Other: "Purgatory",
+			Other: "Purgatory {{.GhostEmoji}}",
+		},
+		TemplateData: map[string]interface{}{
+			"GhostEmoji": "\U0001f47b",
 		},
 	})
 	if err != nil {

@@ -29,6 +29,8 @@ func GetLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// use
+
 	// i18n
 	tmplVars.PageTitle, err = localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{

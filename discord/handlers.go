@@ -7,11 +7,11 @@ import (
 )
 
 func handleGuildCreate(s *discordgo.Session, m *discordgo.GuildCreate) {
-	logger.Tracef("GuildCreate[%#v]", m.Guild)
+	logger.Tracef("GuildCreate[%s, \"%s\"]", m.Guild.ID, m.Guild.Name)
 }
 
 func handleGuildDelete(s *discordgo.Session, m *discordgo.GuildDelete) {
-	logger.Tracef("GuildDelete[%#v]", m.Guild)
+	logger.Tracef("handleGuildDelete[%s, \"%s\"]", m.Guild.ID, m.Guild.Name)
 }
 
 func handleMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
