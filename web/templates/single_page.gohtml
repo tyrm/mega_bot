@@ -1,14 +1,16 @@
 {{ define "single_page" -}}
-{{template "header" . }}
-<div class="row">
-    <div class="col">
-        <h1>{{.Header}}</h1>
+{{- template "header" . -}}
+<div role="main" class="container">
+    <div class="row">
+        <div class="col">
+            <h1>{{.Header}}</h1>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="col">
-        {{range .Paragraphs}}<p>{{.}}</p>{{end}}
+    <div class="row">
+        <div class="col">
+            {{range .Paragraphs}}<p>{{.}}</p>{{end}}
+        </div>
     </div>
-</div>
-{{template "footer" . }}
+</div><!-- /.container -->
+{{- template "footer" . -}}
 {{- end }}

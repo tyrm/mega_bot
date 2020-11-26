@@ -20,10 +20,9 @@
     {{template "head_link" $link }}
 {{- end}}
 </head>
-<body>
-{{template "navbar" . }}
-{{template "alert_bars" . }}
-<div role="main" class="container">
+<body{{if .BodyClass}} class="{{.BodyClass}}"{{end -}}>
+{{- if .NavBarEnabled}}{{template "navbar" . }}{{end -}}
+{{- template "alert_bars" . -}}
 {{ end }}
 
 {{define "head_link" }}<link href="{{ .HRef }}"{{if .Rel}} rel="{{ .Rel }}"{{end}}{{if .Integrity}} integrity="{{ .Integrity }}"{{end}}{{if .Sizes}} sizes="{{ .Sizes }}"{{end}}{{if .CrossOrigin}} crossorigin="{{ .CrossOrigin }}"{{end}}{{if .Type}} type="{{ .Type }}"{{end}}>{{end}}

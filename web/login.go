@@ -29,7 +29,19 @@ func GetLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// use
+	// change CSS sheet
+	tmplVars.HeadCSS = &[]templateHeadLink{
+		{
+			HRef: "/static/css/login.css",
+			Rel: "stylesheet",
+		},
+	}
+
+	// disable navbar
+	tmplVars.NavBarEnabled = false
+
+	// custom body css
+	tmplVars.BodyClass = "text-center"
 
 	// i18n
 	tmplVars.PageTitle, err = localizer.Localize(&i18n.LocalizeConfig{

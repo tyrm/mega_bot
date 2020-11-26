@@ -26,9 +26,16 @@ type templateCommon struct {
 	AlertSuccess *templateAlert
 	AlertWarn    *templateAlert
 
-	NavBar    *[]templateNavbarNode
-	PageTitle string
-	User      *models.User
+	BodyClass     string
+	NavBarEnabled bool
+	NavBar        *[]templateNavbarNode
+	PageTitle     string
+	User          *models.User
+}
+
+func (t *templateCommon) EnableNavBar() {
+	t.NavBarEnabled = true
+	return
 }
 
 func (t *templateCommon) SetAlertError(a *templateAlert) {
@@ -93,6 +100,7 @@ type templateNavbarNode struct {
 }
 
 type templateVars interface {
+	EnableNavBar()
 	SetAlertError(a *templateAlert)
 	SetAlertSuccess(a *templateAlert)
 	SetAlertWarn(a *templateAlert)
@@ -103,10 +111,9 @@ type templateVars interface {
 	SetUser(u *models.User)
 }
 
-
 type SinglePageTemplate struct {
 	templateCommon
-	Header string
+	Header     string
 	Paragraphs []string
 }
 
@@ -146,6 +153,8 @@ func initTemplate(w http.ResponseWriter, r *http.Request, tmpl templateVars) err
 
 	// add navbar
 	tmpl.SetNavbar(makeNavbar(r))
+	tmpl.EnableNavBar()
+
 
 	// add user
 	if r.Context().Value(UserKey) != nil {

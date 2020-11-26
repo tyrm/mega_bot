@@ -1,9 +1,11 @@
 {{ define "home" -}}
-{{template "header" . }}
-<div class="row">
-    <div class="col">
-        <h1>Bot Stuff Beep Boop</h1>
+{{- template "header" . -}}
+<div role="main" class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Bot Stuff Beep Boop</h1>
+        </div>
     </div>
-</div>
-{{template "footer" . }}
+</div><!-- /.container -->
+{{- template "footer" . -}}
 {{- end }}
