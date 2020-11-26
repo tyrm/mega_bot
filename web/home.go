@@ -10,11 +10,10 @@ type HomeTemplate struct {
 }
 
 func GetHome(w http.ResponseWriter, r *http.Request) {
-	// localizer
-	lang := r.FormValue("lang")
-	accept := r.Header.Get("Accept-Language")
-	localizer := i18n.NewLocalizer(langBundle, lang, accept)
+	// get localizer
+	localizer := r.Context().Value(LocalizerKey).(*i18n.Localizer)
 
+	// Init template variables
 	tmplVars := &HomeTemplate{}
 	err := initTemplate(w, r, tmplVars)
 	if err != nil {

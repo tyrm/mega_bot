@@ -103,6 +103,13 @@ type templateVars interface {
 	SetUser(u *models.User)
 }
 
+
+type SinglePageTemplate struct {
+	templateCommon
+	Header string
+	Paragraphs []string
+}
+
 func compileTemplates(dir string) (*template.Template, error) {
 	tpl := template.New("")
 
@@ -138,7 +145,7 @@ func initTemplate(w http.ResponseWriter, r *http.Request, tmpl templateVars) err
 	saveSession := false
 
 	// add navbar
-	tmpl.SetNavbar(makeNavbar(r.URL.Path))
+	tmpl.SetNavbar(makeNavbar(r))
 
 	// add user
 	if r.Context().Value(UserKey) != nil {

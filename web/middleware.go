@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"github.com/gorilla/sessions"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"mega_bot/models"
 	"net/http"
 )
@@ -26,14 +27,22 @@ func Middleware(next http.Handler) http.Handler {
 			ctx = context.WithValue(ctx, UserKey, &user)
 		}
 
+		// Init Localizer
+		lang := r.FormValue("lang")
+		accept := r.Header.Get("Accept-Language")
+		localizer := i18n.NewLocalizer(langBundle, lang, accept)
+		ctx = context.WithValue(ctx, LocalizerKey, localizer)
+
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func MiddlewareRequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		us := r.Context().Value(SessionKey).(*sessions.Session)
+
 		if r.Context().Value(UserKey) == nil {
+			us := r.Context().Value(SessionKey).(*sessions.Session)
+
 			// Save current page
 			us.Values["login-redirect"] = r.URL.Path
 			err := us.Save(r, w)
@@ -45,6 +54,12 @@ func MiddlewareRequireAuth(next http.Handler) http.Handler {
 			// redirect to login
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
+		} else {
+			user := r.Context().Value(UserKey).(*models.User)
+
+			if !user.Authorized && r.URL.Path != "/purgatory" {
+				http.Redirect(w, r, "/purgatory", http.StatusFound)
+			}
 		}
 
 		next.ServeHTTP(w, r)

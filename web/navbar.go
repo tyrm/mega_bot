@@ -1,111 +1,92 @@
 package web
 
-import "regexp"
-import "github.com/jinzhu/copier"
+import (
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"net/http"
+	"regexp"
+)
 
-var NavbarTemplate = []templateNavbarNode{
-	{
-		Text:     "Home",
-		MatchStr: "^/$",
-		FAIcon:   "home",
-		URL:      "/",
-	},
-	{
-		Text:     "Responder",
-		MatchStr: "^/responder/.*$",
-		FAIcon:   "comment-alt",
-		URL:      "/responder/",
-	},
-	{
-		Text:   "Admin",
-		FAIcon: "hammer",
-		URL:    "#",
-		Children: []*templateNavbarNode{
-			{
-				Text:     "Job Runner",
-				MatchStr: "^/web/admin/jobrunner/.*$",
-				FAIcon:   "clock",
-				URL:      "/web/admin/jobrunner/",
-			},
-			{
-				Text:     "Oauth Clients",
-				MatchStr: "^/web/admin/oauth-clients/.*$",
-				FAIcon:   "desktop",
-				URL:      "/web/admin/oauth-clients/",
-				Disabled: true,
-			},
-			{
-				Text:     "Registry",
-				MatchStr: "^/web/admin/registry/.*$",
-				FAIcon:   "book",
-				URL:      "/web/admin/registry/",
-			},
-			{
-				Text:     "Users",
-				MatchStr: "^/web/admin/users/.*$",
-				FAIcon:   "user",
-				URL:      "/web/admin/users/",
-			},
-			{
-				Text:     "Something else here",
-				FAIcon:   "paw",
-				URL:      "#",
-				Disabled: true,
-			},
-		},
-	},
-}
+func makeNavbar(r *http.Request) (navbar *[]templateNavbarNode) {
+	// get localizer
+	localizer := r.Context().Value(LocalizerKey).(*i18n.Localizer)
 
-var NavbarAdminTemplate = templateNavbarNode{
-	Text:   "Admin",
-	FAIcon: "hammer",
-	URL:    "#",
-	Children: []*templateNavbarNode{
-		{
-			Text:     "Job Runner",
-			MatchStr: "^/web/admin/jobrunner/.*$",
-			FAIcon:   "clock",
-			URL:      "/web/admin/jobrunner/",
+	// i18n stuff
+	natbarTextHome, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID:          "NavebarHome",
+			Description: "Home button on Navbar",
+			Other:       "Home",
 		},
-		{
-			Text:     "Oauth Clients",
-			MatchStr: "^/web/admin/oauth-clients/.*$",
-			FAIcon:   "desktop",
-			URL:      "/web/admin/oauth-clients/",
-			Disabled: true,
-		},
-		{
-			Text:     "Registry",
-			MatchStr: "^/web/admin/registry/.*$",
-			FAIcon:   "book",
-			URL:      "/web/admin/registry/",
-		},
-		{
-			Text:     "Users",
-			MatchStr: "^/web/admin/users/.*$",
-			FAIcon:   "user",
-			URL:      "/web/admin/users/",
-		},
-		{
-			Text:     "Something else here",
-			FAIcon:   "paw",
-			URL:      "#",
-			Disabled: true,
-		},
-	},
-}
-
-func makeNavbar(path string) (navbar *[]templateNavbarNode) {
-	var newNavbar []templateNavbarNode
-	err := copier.Copy(&newNavbar, &NavbarTemplate)
+	})
 	if err != nil {
-		logger.Errorf("could not copy navbar template: %s", err.Error())
+		logger.Warningf("missing translation: %s", err.Error())
 	}
 
+	natbarTextResponder, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID:          "NavbarResponder",
+			Description: "Responder button on Navbar",
+			Other:       "Responder",
+		},
+	})
+	if err != nil {
+		logger.Warningf("missing translation: %s", err.Error())
+	}
+
+	natbarTextAdmin, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID:          "NavbarAdmin",
+			Description: "Admin button on Navbar",
+			Other:       "Admin",
+		},
+	})
+	if err != nil {
+		logger.Warningf("missing translation: %s", err.Error())
+	}
+
+	natbarTextAdminUser, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID:          "NavbarAdminUsers",
+			Description: "Users button on Navbar in the Admin Menu",
+			Other:       "Users",
+		},
+	})
+	if err != nil {
+		logger.Warningf("missing translation: %s", err.Error())
+	}
+
+	// create navbar
+	newNavbar := []templateNavbarNode{
+		{
+			Text: natbarTextHome,
+			MatchStr: "^/$",
+			FAIcon:   "home",
+			URL:      "/",
+		},
+		{
+			Text: natbarTextResponder,
+			MatchStr: "^/responder/.*$",
+			FAIcon:   "comment-alt",
+			URL:      "/responder/",
+		},
+		{
+			Text: natbarTextAdmin,
+			FAIcon: "hammer",
+			URL:    "#",
+			Children: []*templateNavbarNode{
+				{
+					Text: natbarTextAdminUser,
+					MatchStr: "^/web/admin/users/.*$",
+					FAIcon:   "user",
+					URL:      "/web/admin/users/",
+				},
+			},
+		},
+	}
 
 	for i := 0; i < len(newNavbar); i++ {
 		if newNavbar[i].MatchStr != "" {
-			match, err := regexp.MatchString(newNavbar[i].MatchStr, path)
+			match, err := regexp.MatchString(newNavbar[i].MatchStr, r.URL.Path)
 			if err != nil {
 				logger.Errorf("makeNavbar:Error matching regex: %v", err)
 			}
@@ -119,7 +100,7 @@ func makeNavbar(path string) (navbar *[]templateNavbarNode) {
 			for j := 0; j < len(newNavbar[i].Children); j++ {
 
 				if newNavbar[i].Children[j].MatchStr != "" {
-					subMatch, err := regexp.MatchString(newNavbar[i].Children[j].MatchStr, path)
+					subMatch, err := regexp.MatchString(newNavbar[i].Children[j].MatchStr, r.URL.Path)
 					if err != nil {
 						logger.Errorf("makeNavbar:Error matching regex: %v", err)
 					}

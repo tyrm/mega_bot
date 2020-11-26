@@ -22,6 +22,7 @@ import (
 
 const SessionKey contextKey = 0
 const UserKey contextKey = 1
+const LocalizerKey contextKey = 2
 
 var (
 	langBundle *i18n.Bundle
@@ -49,12 +50,10 @@ func Init(conf *config.Config) error {
 	templates = t
 
 	// Load Languages
-	bundle := i18n.NewBundle(language.English)
-	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
-	// No need to load active.en.toml since we are providing default translations.
-	// bundle.MustLoadMessageFile("active.en.toml")
-	bundle.MustLoadMessageFile("active.es.toml")
-
+	bundle, err := compileLanguages()
+	if err != nil {
+		return err
+	}
 	langBundle = bundle
 
 	// Fetch new store.
@@ -92,6 +91,7 @@ func Init(conf *config.Config) error {
 	// Protected Pages
 	protected := r.PathPrefix("/").Subrouter()
 	protected.Use(MiddlewareRequireAuth)
+	protected.HandleFunc("/purgatory", GetPurgatory).Methods("GET")
 	protected.HandleFunc("/", GetHome).Methods("GET")
 
 	go func() {
@@ -110,3 +110,38 @@ func Init(conf *config.Config) error {
 	return nil
 }
 
+
+func compileLanguages() (*i18n.Bundle, error) {
+	bundle := i18n.NewBundle(language.English)
+	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+
+	// Files muse be listed with Include for pkger to pull them in
+	files := map[string]string{
+		"active.es.toml": pkger.Include("/active.es.toml"),
+	}
+
+	for filename, file := range files {
+		langFile, err := pkger.Open(file)
+		if err != nil {
+			return nil, err
+		}
+		defer langFile.Close()
+
+		fileinfo, err := langFile.Stat()
+		if err != nil {
+			return nil, err
+		}
+
+		filesize := fileinfo.Size()
+		buffer := make([]byte, filesize)
+
+		_, err = langFile.Read(buffer)
+		if err != nil {
+			return nil, err
+		}
+
+		bundle.MustParseMessageFileBytes(buffer, filename)
+	}
+
+	return bundle, nil
+}
