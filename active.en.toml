@@ -2,6 +2,34 @@
 description = "Title of the home page."
 other = "Home"
 
+[LoginButtonForgotPassword]
+description = "Forgot Password button in the login form."
+other = "Forgot Password"
+
+[LoginButtonLoginDiscord]
+description = "Login with Discord button in the login form."
+other = "Login with {{.Icon}} Discord"
+
+[LoginButtonSignIn]
+description = "Sign In button in the login form."
+other = "Sign In"
+
+[LoginHeader]
+description = "Header of the login page."
+other = "Please sign in"
+
+[LoginLabelEmailAddress]
+description = "Email address field label in the login form."
+other = "Email address"
+
+[LoginLabelPassword]
+description = "Password field label in the login form."
+other = "Password"
+
+[LoginTitle]
+description = "Title of the login page."
+other = "Login"
+
 [NavbarAdmin]
 description = "Admin button on Navbar"
 other = "Admin"
