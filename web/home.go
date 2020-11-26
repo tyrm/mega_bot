@@ -21,13 +21,16 @@ func GetHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmplVars.PageTitle = localizer.MustLocalize(&i18n.LocalizeConfig{
+	tmplVars.PageTitle, err = localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
-			ID:    "TitleHome",
+			ID:    "HomeTitle",
 			Description: "Title of the home page.",
 			Other: "Home",
 		},
 	})
+	if err != nil {
+		logger.Warningf("missing translation: %s", err.Error())
+	}
 
 	err = templates.ExecuteTemplate(w, "home", tmplVars)
 	if err != nil {

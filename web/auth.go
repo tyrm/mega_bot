@@ -178,6 +178,7 @@ func authProviderCallback(w http.ResponseWriter, r *http.Request, gu goth.User) 
 		}
 
 		http.Redirect(w, r, "/", http.StatusFound)
+		return
 	}
 
 	http.Error(w, "unknown state", http.StatusInternalServerError)

@@ -29,6 +29,8 @@ func GetPurgatory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tmplVars.NavBar = &[]templateNavbarNode{}
+
 	tmplVars.PageTitle, err = localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID:    "PurgatoryTitle",
