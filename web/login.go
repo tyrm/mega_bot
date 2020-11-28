@@ -2,7 +2,6 @@ package web
 
 import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"html/template"
 	"net/http"
 	"strings"
 )
@@ -15,7 +14,7 @@ type LoginTemplate struct {
 	LabelPassword        string
 	ButtonSignIn         string
 	ButtonForgotPassword string
-	ButtonLoginDiscord   template.HTML
+	ButtonLoginDiscord   string
 }
 
 func GetLogin(w http.ResponseWriter, r *http.Request) {
@@ -80,7 +79,7 @@ func GetLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	tmplVars.ButtonForgotPassword = strings.Title(tmplVars.ButtonForgotPassword)
 
-	buttonLoginDiscord, err := localizer.Localize(&i18n.LocalizeConfig{
+	tmplVars.ButtonLoginDiscord, err = localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &textLoginDiscord,
 		TemplateData: map[string]interface{}{
 			"Icon": "<i class=\"fab fa-discord\"></i>",
@@ -89,7 +88,6 @@ func GetLogin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
-	tmplVars.ButtonLoginDiscord = template.HTML(buttonLoginDiscord) // preserve html
 
 	err = templates.ExecuteTemplate(w, "login", tmplVars)
 	if err != nil {

@@ -15,13 +15,13 @@
     </div>
     <div class="row">
         <div class="col">
-            <table class="table table-hover">
-                <thead>
+            <table class="table table-sm table-hover">
+                <thead class="thead-light">
                 <tr>
                     <th scope="col">Description</th>
                     <th scope="col">Match Regex</th>
-                    <th scope="col">Response</th>
-                    <th scope="col">Tags</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Response</th>
+                    <th scope="col" class="d-none d-sm-table-cell"></th>
                     <th scope="col"></th>
                 </tr>
                 </thead>
@@ -30,8 +30,8 @@
                     <tr>
                         <th scope="row">{{.Description}}</th>
                         <td>{{.MatcherString}}</td>
-                        <td>{{.Response}}</td>
-                        <td>
+                        <td class="d-none d-lg-table-cell">{{.Response}}</td>
+                        <td class="d-none d-sm-table-cell">
                             {{if .AlwaysRespond -}}
                                 <span class="badge badge-success">Always Respond</span>
                             {{- end}}
@@ -40,12 +40,10 @@
                             {{- end}}
                         </td>
                         <td class="text-right">
-                            <div class="btn-group">
-                                <a href="/responder/edit/{{.ID}}" class="btn btn-sm btn-outline-primary"><i
-                                            class="fas fa-edit"></i></a>
-                                <a href="/responder/delete/{{.ID}}" class="btn btn-sm btn-outline-danger"><i
-                                            class="fas fa-trash-alt"></i></a>
-                            </div>
+                            <a href="/responder/edit/{{.ID}}" class="btn btn-sm btn-outline-primary"><i
+                                        class="fas fa-edit"></i></a>
+                            <a href="/responder/delete/{{.ID}}" class="btn btn-sm btn-outline-danger"><i
+                                        class="fas fa-trash-alt"></i></a>
                         </td>
                     </tr>
                 {{end}}
@@ -56,16 +54,13 @@
 
     <div class="row">
         <div class="col">
-            <div class="p-2">Flex item
-            </div>
+            <div class="p-2"></div>
         </div>
         <div class="col text-center">
-            <div class="p-2">Flex item
-            </div>
+            <div class="p-2">Flex item</div>
         </div>
         <div class="col text-right">
-            <div class="p-2">Flex item
-            </div>
+            <div class="p-2">Flex item</div>
         </div>
     </div>
 </div><!-- /.container -->

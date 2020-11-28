@@ -12,14 +12,37 @@ description = "if possible, the abbreviated form of the word: administrator"
 one = "admin"
 other = "admins"
 
+[AlwaysRespond]
+description = "the phrase: add responder"
+other = "always respond to match"
+
+[Description]
+description = "the word: description"
+one = "description"
+other = "descriptions"
+
+[EditResponder]
+description = "the phrase: edit responder"
+one = "edit responder"
+other = "edit responders"
+
 [EmailAddress]
 description = "the phrase: email address"
 one = "email address"
 other = "email addresses"
 
+[Enabled]
+description = "the word: enabled"
+other = "enabled"
+
 [ForgotPassword]
 description = "the phrase: forgot password"
 other = "forgot password"
+
+[ID]
+description = "the abbreviation of the word: identification"
+one = "ID"
+other = "IDs"
 
 [Login]
 description = "the word: login"
@@ -29,6 +52,11 @@ other = "logins"
 [LoginDiscord]
 description = "the capitalized phrase: Login with {{.Icon}} Discord"
 other = "Login with {{.Icon}} Discord"
+
+[MatchRegex]
+description = "the phrase: match regex"
+one = "match regex"
+other = "match regexes"
 
 [Password]
 description = "the word: password"
@@ -48,6 +76,11 @@ other = "If you're seeing this page you're not approved to use MegaBot. Please c
 description = "the word: responder"
 one = "responder"
 other = "responders"
+
+[Response]
+description = "the word: response"
+one = "response"
+other = "responses"
 
 [SignIn]
 description = "the phrase: sign in"

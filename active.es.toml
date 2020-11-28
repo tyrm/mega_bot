@@ -1,34 +1,4 @@
-[HomeTitle]
-description = "Title of the home page."
-hash = "sha1-10a9c0b860ec763166a03868c2faf517e1b3da41"
-other = "Inicio"
-
-[NavbarAdmin]
-description = "Admin button on Navbar"
-hash = "sha1-d2d4e48d3f4f7808b27bd982b223e2fa1a0d8ad7"
-other = "Administrador"
-
-[NavbarAdminUsers]
-description = "Users button on Navbar in the Admin Menu"
-hash = "sha1-79de9c793bbb9e9d3ee101bba16f4aa870daaf9f"
-other = "Usuarios"
-
-[NavbarResponder]
-description = "Responder button on Navbar"
-hash = "sha1-2c5ac5bdb277319f294213b42253e18bc9e39f6c"
-other = "Respondedor"
-
-[NavebarHome]
-description = "Home button on Navbar"
-hash = "sha1-b737a5694fcaa640dc74ab4db006eb398e989ca9"
-other = "Inicio"
-
-[PurgatoryHeader]
-description = "Header of the purgatory page."
-hash = "sha1-9a2515cbf2c588eb1e693cdee69e8a22361a5bf8"
-other = "Purgatorio {{.GhostEmoji}}"
-
-[PurgatoryTitle]
-description = "Title of the purgatory page."
-hash = "sha1-05444a8358171e4b382467d5e43d08ac518c732b"
-other = "Purgatorio"
+[WebHome]
+description = "in the context of the internet, the word: home"
+hash = "sha1-46b562fe08ae62c5b52e81ce9756eb6afef229e9"
+other = "inicio"

@@ -1,9 +1,9 @@
 -- +migrate Up
 CREATE TABLE "public"."responder_matchers" (
-    id uuid DEFAULT uuid_generate_v4 (),
+    id uuid NOT NULL DEFAULT uuid_generate_v4 (),
     always_respond boolean NOT NULL,
     enabled boolean NOT NULL,
-    description character varying,
+    description character varying NOT NULL,
     matcher_re character varying NOT NULL,
     repsonse character varying NOT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,

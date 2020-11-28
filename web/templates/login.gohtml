@@ -14,8 +14,8 @@
     </div -->
     <button class="btn btn-lg btn-primary btn-block" type="submit">{{.ButtonSignIn}}</button>
     <a class="btn btn-lg btn-primary btn-block" href="/forgotpassword">{{.ButtonForgotPassword}}</a>
-    <a class="btn btn-lg btn-discord btn-block mt-3" href="/auth/discord">{{.ButtonLoginDiscord}}</a>
-    <p class="mt-5 mb-3 text-muted">&copy; 2020</p>
+    <a class="btn btn-lg btn-discord btn-block mt-3" href="/auth/discord">{{htmlSafe .ButtonLoginDiscord}}</a>
+    <p class="mt-5 mb-3"><a href="https://github.com/tyrm/mega_bot" target="_blank" class="text-muted">MegaBot</a></p>
 </form>
 {{- template "footer" . -}}
 {{ end }}

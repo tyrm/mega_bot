@@ -131,6 +131,9 @@ func compileTemplates(dir string) (*template.Template, error) {
 			i--
 			return i
 		},
+		"htmlSafe": func(html string) template.HTML {
+			return template.HTML(html)
+		},
 	})
 
 	err := pkger.Walk(dir, func(path string, info os.FileInfo, _ error) error {

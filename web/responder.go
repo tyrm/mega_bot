@@ -215,7 +215,7 @@ func GetResponderEdit(w http.ResponseWriter, r *http.Request) {
 
 	// get responder
 	vars := mux.Vars(r)
-	if !isValidUUID(vars["responder"]) {
+	if !isValidUUID4(vars["responder"]) {
 		returnErrorPage(w, r, http.StatusBadRequest, "invalid id format")
 		return
 	}
