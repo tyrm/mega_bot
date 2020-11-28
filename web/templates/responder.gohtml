@@ -1,0 +1,126 @@
+{{ define "responder" -}}
+{{- template "header" . -}}
+<div role="main" class="container">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">{{.Header}}</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group">
+                        <a href="/responder/add" class="btn btn-sm btn-outline-primary">{{.ButtonAdd}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Description</th>
+                    <th scope="col">Match Regex</th>
+                    <th scope="col">Response</th>
+                    <th scope="col">Tags</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {{range $rm := .RMs}}
+                    <tr>
+                        <th scope="row">{{.Description}}</th>
+                        <td>{{.MatcherString}}</td>
+                        <td>{{.Response}}</td>
+                        <td>
+                            {{if .AlwaysRespond -}}
+                                <span class="badge badge-success">Always Respond</span>
+                            {{- end}}
+                            {{- if not .Enabled -}}
+                                <span class="badge badge-danger">Disabled</span>
+                            {{- end}}
+                        </td>
+                        <td class="text-right">
+                            <div class="btn-group">
+                                <a href="/responder/edit/{{.ID}}" class="btn btn-sm btn-outline-primary"><i
+                                            class="fas fa-edit"></i></a>
+                                <a href="/responder/delete/{{.ID}}" class="btn btn-sm btn-outline-danger"><i
+                                            class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="p-2">Flex item
+            </div>
+        </div>
+        <div class="col text-center">
+            <div class="p-2">Flex item
+            </div>
+        </div>
+        <div class="col text-right">
+            <div class="p-2">Flex item
+            </div>
+        </div>
+    </div>
+</div><!-- /.container -->
+{{- template "footer" . -}}
+{{- end }}
+
+{{ define "responder_form" -}}
+{{- template "header" . -}}
+<div role="main" class="container">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">{{.Header}}</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{- template "breadcrumb" .Breadcrumbs -}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form method="post">
+                <div class="mb-3 custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="enabled" checked>
+                    <label class="custom-control-label" for="enabled">{{.LabelEnabled}}</label>
+                </div>
+                {{- if .ID}}
+                    <div class="mb-3">
+                        <label for="id">{{.LabelID}}</label>
+                        <input type="text" class="form-control" id="id" value="{{.ID}}" disabled>
+                    </div>
+                {{- end}}
+                <div class="mb-3">
+                    <label for="description">{{.LabelDescription}}</label>
+                    <input type="text" class="form-control" id="description" placeholder="UwU"{{- if .Description}} value="{{.Description}}"{{end}} required>
+                </div>
+                <div class="mb-3">
+                    <label for="regex">{{.LabelMatchRegex}}</label>
+                    <input type="text" class="form-control" id="regex" placeholder="(?i)uwu" required>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="always-respond">
+                        <label class="custom-control-label" for="always-respond">{{.LabelAlwaysRespond}}</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="response">{{.LabelResponse}}</label>
+                    <input type="text" class="form-control" id="response" placeholder="owo" required>
+                </div>
+                <hr class="mb-4">
+                <button class="btn btn-primary btn-lg btn-block" type="submit">{{.ButtonSubmit}}</button>
+            </form>
+        </div>
+    </div>
+</div><!-- /.container -->
+{{- template "footer" . -}}
+{{- end }}

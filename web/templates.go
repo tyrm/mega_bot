@@ -17,6 +17,12 @@ type templateAlert struct {
 	Text   string
 }
 
+type templateBreadcrumb struct {
+	HRef string
+	Text   string
+}
+
+
 type templateCommon struct {
 	HeadCSS          *[]templateHeadLink
 	HeadFavicons     *[]templateHeadLink
@@ -120,6 +126,13 @@ type SinglePageTemplate struct {
 func compileTemplates(dir string) (*template.Template, error) {
 	tpl := template.New("")
 
+	tpl.Funcs(template.FuncMap{
+		"dec": func(i int) int {
+			i--
+			return i
+		},
+	})
+
 	err := pkger.Walk(dir, func(path string, info os.FileInfo, _ error) error {
 		if info.IsDir() || !strings.HasSuffix(path, ".gohtml") {
 			return nil
@@ -144,23 +157,14 @@ func compileTemplates(dir string) (*template.Template, error) {
 
 		return nil
 	})
+
 	return tpl, err
 }
 
 func initTemplate(w http.ResponseWriter, r *http.Request, tmpl templateVars) error {
-	us := r.Context().Value(SessionKey).(*sessions.Session)
-	saveSession := false
-
 	// add navbar
 	tmpl.SetNavbar(makeNavbar(r))
 	tmpl.EnableNavBar()
-
-
-	// add user
-	if r.Context().Value(UserKey) != nil {
-		user := r.Context().Value(UserKey).(*models.User)
-		tmpl.SetUser(user)
-	}
 
 	// add css
 	var headFrameworkCSS []templateHeadLink
@@ -183,6 +187,20 @@ func initTemplate(w http.ResponseWriter, r *http.Request, tmpl templateVars) err
 		return err
 	}
 	tmpl.SetHeadCSS(&headCSS)
+
+	// try to read session data
+	if r.Context().Value(SessionKey) == nil {
+		return nil
+	}
+
+	us := r.Context().Value(SessionKey).(*sessions.Session)
+	saveSession := false
+
+	// add user
+	if r.Context().Value(UserKey) != nil {
+		user := r.Context().Value(UserKey).(*models.User)
+		tmpl.SetUser(user)
+	}
 
 	// add alerts
 	if us.Values["page-alert-error"] != nil {

@@ -1,59 +1,67 @@
-[HomeTitle]
-description = "Title of the home page."
-other = "Home"
+[Add]
+description = "the word: add"
+other = "add"
 
-[LoginButtonForgotPassword]
-description = "Forgot Password button in the login form."
-other = "Forgot Password"
+[AddResponder]
+description = "the phrase: add responder"
+one = "add responder"
+other = "add responders"
 
-[LoginButtonLoginDiscord]
-description = "Login with Discord button in the login form."
+[Admin]
+description = "if possible, the abbreviated form of the word: administrator"
+one = "admin"
+other = "admins"
+
+[EmailAddress]
+description = "the phrase: email address"
+one = "email address"
+other = "email addresses"
+
+[ForgotPassword]
+description = "the phrase: forgot password"
+other = "forgot password"
+
+[Login]
+description = "the word: login"
+one = "login"
+other = "logins"
+
+[LoginDiscord]
+description = "the capitalized phrase: Login with {{.Icon}} Discord"
 other = "Login with {{.Icon}} Discord"
 
-[LoginButtonSignIn]
-description = "Sign In button in the login form."
-other = "Sign In"
+[Password]
+description = "the word: password"
+one = "password"
+other = "passwords"
 
-[LoginHeader]
-description = "Header of the login page."
-other = "Please sign in"
+[Purgatory]
+description = "the word: purgatory"
+one = "purgatory"
+other = "purgatories"
 
-[LoginLabelEmailAddress]
-description = "Email address field label in the login form."
-other = "Email address"
-
-[LoginLabelPassword]
-description = "Password field label in the login form."
-other = "Password"
-
-[LoginTitle]
-description = "Title of the login page."
-other = "Login"
-
-[NavbarAdmin]
-description = "Admin button on Navbar"
-other = "Admin"
-
-[NavbarAdminUsers]
-description = "Users button on Navbar in the Admin Menu"
-other = "Users"
-
-[NavbarResponder]
-description = "Responder button on Navbar"
-other = "Responder"
-
-[NavebarHome]
-description = "Home button on Navbar"
-other = "Home"
-
-[PurgatoryHeader]
-description = "Header of the purgatory page."
-other = "Purgatory {{.GhostEmoji}}"
-
-[PurgatoryText]
+[PurgatoryPageText]
 description = "Text of the purgatory page."
 other = "If you're seeing this page you're not approved to use MegaBot. Please contact the administrator."
 
-[PurgatoryTitle]
-description = "Title of the purgatory page."
-other = "Purgatory"
+[Responder]
+description = "the word: responder"
+one = "responder"
+other = "responders"
+
+[SignIn]
+description = "the phrase: sign in"
+other = "sign in"
+
+[SignInAsk]
+description = "the sentence: Please sign in."
+other = "Please sign in."
+
+[User]
+description = "the word: user"
+one = "user"
+other = "users"
+
+[WebHome]
+description = "in the context of the internet, the word: home"
+other = "home"

@@ -13,6 +13,7 @@ func worker(id int, c *chan *models.ResponderRequest) {
 
 		activeRespondersMutex.RLock()
 		for _, matcher := range activeResponders {
+			logger.Tracef("[%d] matcher %#v", id, matcher)
 			if matcher.MatcherRE.FindStringIndex(req.Message) != nil {
 				logger.Debugf("[%d] matched message from %s(%s). responder: %s", id, req.Service, req.ResponseTarget, matcher.ID)
 

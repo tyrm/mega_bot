@@ -1,9 +1,11 @@
 package web
 
 import (
+	"fmt"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"mega_bot/models"
 	"net/http"
+	"strings"
 )
 
 func GetPurgatory(w http.ResponseWriter, r *http.Request) {
@@ -29,40 +31,17 @@ func GetPurgatory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// hdie navbar contents
 	tmplVars.NavBar = &[]templateNavbarNode{}
 
-	tmplVars.PageTitle, err = localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "PurgatoryTitle",
-			Description: "Title of the purgatory page.",
-			Other: "Purgatory",
-		},
-	})
+	locPurgatory, err := localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textPurgatory, PluralCount: 1})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
+	tmplVars.PageTitle = strings.Title(locPurgatory)
+	tmplVars.Header = fmt.Sprintf("%s \U0001f47b", strings.Title(locPurgatory))
 
-	tmplVars.Header, err = localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "PurgatoryHeader",
-			Description: "Header of the purgatory page.",
-			Other: "Purgatory {{.GhostEmoji}}",
-		},
-		TemplateData: map[string]interface{}{
-			"GhostEmoji": "\U0001f47b",
-		},
-	})
-	if err != nil {
-		logger.Warningf("missing translation: %s", err.Error())
-	}
-
-	purgatoryText, err := localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "PurgatoryText",
-			Description: "Text of the purgatory page.",
-			Other: "If you're seeing this page you're not approved to use MegaBot. Please contact the administrator.",
-		},
-	})
+	purgatoryText, err := localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textPurgatoryPageText})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}

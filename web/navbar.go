@@ -4,6 +4,7 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"net/http"
 	"regexp"
+	"strings"
 )
 
 func makeNavbar(r *http.Request) (navbar *[]templateNavbarNode) {
@@ -11,49 +12,29 @@ func makeNavbar(r *http.Request) (navbar *[]templateNavbarNode) {
 	localizer := r.Context().Value(LocalizerKey).(*i18n.Localizer)
 
 	// i18n stuff
-	natbarTextHome, err := localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:          "NavebarHome",
-			Description: "Home button on Navbar",
-			Other:       "Home",
-		},
-	})
+	natbarTextHome, err := localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textWebHome})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
+	natbarTextHome = strings.Title(natbarTextHome)
 
-	natbarTextResponder, err := localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:          "NavbarResponder",
-			Description: "Responder button on Navbar",
-			Other:       "Responder",
-		},
-	})
+	natbarTextResponder, err := localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textResponder, PluralCount: 1})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
+	natbarTextResponder = strings.Title(natbarTextResponder)
 
-	natbarTextAdmin, err := localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:          "NavbarAdmin",
-			Description: "Admin button on Navbar",
-			Other:       "Admin",
-		},
-	})
+	natbarTextAdmin, err := localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textAdmin, PluralCount: 1})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
+	natbarTextAdmin = strings.Title(natbarTextAdmin)
 
-	natbarTextAdminUser, err := localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:          "NavbarAdminUsers",
-			Description: "Users button on Navbar in the Admin Menu",
-			Other:       "Users",
-		},
-	})
+	natbarTextUsers, err := localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textUser})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
+	natbarTextUsers = strings.Title(natbarTextUsers)
 
 	// create navbar
 	newNavbar := []templateNavbarNode{
@@ -65,9 +46,9 @@ func makeNavbar(r *http.Request) (navbar *[]templateNavbarNode) {
 		},
 		{
 			Text: natbarTextResponder,
-			MatchStr: "^/responder/.*$",
+			MatchStr: "^/responder.*$",
 			FAIcon:   "comment-alt",
-			URL:      "/responder/",
+			URL:      "/responder",
 		},
 		{
 			Text: natbarTextAdmin,
@@ -75,10 +56,10 @@ func makeNavbar(r *http.Request) (navbar *[]templateNavbarNode) {
 			URL:    "#",
 			Children: []*templateNavbarNode{
 				{
-					Text: natbarTextAdminUser,
-					MatchStr: "^/web/admin/users/.*$",
+					Text:     natbarTextUsers,
+					MatchStr: "^/admin/users/.*$",
 					FAIcon:   "user",
-					URL:      "/web/admin/users/",
+					URL:      "/admin/users/",
 				},
 			},
 		},

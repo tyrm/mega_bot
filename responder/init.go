@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	activeResponders []*models.ResponderMatcher
+	activeResponders map[string]*models.ResponderMatcher
 	activeRespondersMutex sync.RWMutex
 	logger *loggo.Logger
 )
@@ -18,7 +18,10 @@ func Init(conf *config.Config, c *chan *models.ResponderRequest) error {
 	newLogger := loggo.GetLogger("responder")
 	logger = &newLogger
 
-	Load()
+	err := Load()
+	if err != nil {
+		return err
+	}
 
 	for w := 1; w <= conf.ResponderWorkers; w++ {
 		go worker(w, c)

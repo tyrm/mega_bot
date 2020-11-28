@@ -17,6 +17,7 @@ import (
 	"mega_bot/config"
 	"mega_bot/models"
 	"net/http"
+	"regexp"
 	"time"
 )
 
@@ -79,6 +80,10 @@ func Init(conf *config.Config) error {
 	r := mux.NewRouter()
 	r.Use(Middleware)
 
+	// Error Pages
+	r.NotFoundHandler = NotFoundHandler()
+	r.MethodNotAllowedHandler = MethodNotAllowedHandler()
+
 	// Static Files
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(pkger.Dir("/web/static"))))
 
@@ -91,8 +96,11 @@ func Init(conf *config.Config) error {
 	// Protected Pages
 	protected := r.PathPrefix("/").Subrouter()
 	protected.Use(MiddlewareRequireAuth)
-	protected.HandleFunc("/purgatory", GetPurgatory).Methods("GET")
 	protected.HandleFunc("/", GetHome).Methods("GET")
+	protected.HandleFunc("/purgatory", GetPurgatory).Methods("GET")
+	protected.HandleFunc("/responder", GetResponder).Methods("GET")
+	protected.HandleFunc("/responder/add", GetResponderAdd).Methods("GET")
+	protected.HandleFunc("/responder/edit/{responder}", GetResponderEdit).Methods("GET")
 
 	go func() {
 		srv := &http.Server{
@@ -110,7 +118,7 @@ func Init(conf *config.Config) error {
 	return nil
 }
 
-
+// privates
 func compileLanguages() (*i18n.Bundle, error) {
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
@@ -144,4 +152,20 @@ func compileLanguages() (*i18n.Bundle, error) {
 	}
 
 	return bundle, nil
+}
+
+func isValidUUID(uuid string) bool {
+	r := regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
+	return r.MatchString(uuid)
+}
+
+func roundUp(f float64) uint64 {
+	fint := uint64(f)
+
+	if f > float64(fint) {
+		fint++
+	}
+
+	logger.Debugf("roundUp: %f int: %d", f, fint)
+	return fint
 }

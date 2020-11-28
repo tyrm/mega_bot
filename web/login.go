@@ -4,6 +4,7 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"html/template"
 	"net/http"
+	"strings"
 )
 
 type LoginTemplate struct {
@@ -44,78 +45,43 @@ func GetLogin(w http.ResponseWriter, r *http.Request) {
 	tmplVars.BodyClass = "text-center"
 
 	// i18n
-	tmplVars.PageTitle, err = localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:          "LoginTitle",
-			Description: "Title of the login page.",
-			Other:       "Login",
-		},
-	})
+	tmplVars.PageTitle, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textLogin})
+	if err != nil {
+		logger.Warningf("missing translation: %s", err.Error())
+	}
+	tmplVars.PageTitle = strings.Title(tmplVars.PageTitle)
+
+	tmplVars.Header, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textSignInAsk})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
 
-	tmplVars.Header, err = localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:          "LoginHeader",
-			Description: "Header of the login page.",
-			Other:       "Please sign in",
-		},
-	})
+	tmplVars.LabelEmailAddress, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textEmailAddress})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
+	tmplVars.LabelEmailAddress = strings.Title(tmplVars.LabelEmailAddress)
 
-	tmplVars.LabelEmailAddress, err = localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:          "LoginLabelEmailAddress",
-			Description: "Email address field label in the login form.",
-			Other:       "Email address",
-		},
-	})
+	tmplVars.LabelPassword, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textPassword})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
+	tmplVars.LabelPassword = strings.Title(tmplVars.LabelPassword)
 
-	tmplVars.LabelPassword, err = localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:          "LoginLabelPassword",
-			Description: "Password field label in the login form.",
-			Other:       "Password",
-		},
-	})
+	tmplVars.ButtonSignIn, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textSignIn})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
+	tmplVars.ButtonSignIn = strings.Title(tmplVars.ButtonSignIn)
 
-	tmplVars.ButtonSignIn, err = localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:          "LoginButtonSignIn",
-			Description: "Sign In button in the login form.",
-			Other:       "Sign In",
-		},
-	})
+	tmplVars.ButtonForgotPassword, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textForgotPassword})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
-
-	tmplVars.ButtonForgotPassword, err = localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:          "LoginButtonForgotPassword",
-			Description: "Forgot Password button in the login form.",
-			Other:       "Forgot Password",
-		},
-	})
-	if err != nil {
-		logger.Warningf("missing translation: %s", err.Error())
-	}
+	tmplVars.ButtonForgotPassword = strings.Title(tmplVars.ButtonForgotPassword)
 
 	buttonLoginDiscord, err := localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:          "LoginButtonLoginDiscord",
-			Description: "Login with Discord button in the login form.",
-			Other:       "Login with {{.Icon}} Discord",
-		},
+		DefaultMessage: &textLoginDiscord,
 		TemplateData: map[string]interface{}{
 			"Icon": "<i class=\"fab fa-discord\"></i>",
 		},

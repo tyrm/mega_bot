@@ -3,6 +3,7 @@ CREATE TABLE "public"."responder_matchers" (
     id uuid DEFAULT uuid_generate_v4 (),
     always_respond boolean NOT NULL,
     enabled boolean NOT NULL,
+    description character varying,
     matcher_re character varying NOT NULL,
     repsonse character varying NOT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -12,8 +13,8 @@ CREATE TABLE "public"."responder_matchers" (
 ;
 
 INSERT INTO public.responder_matchers(
-	always_respond, enabled, matcher_re, repsonse)
-	VALUES (true, true, '[uU][wW][uU]', ':skull: owo')
+	always_respond, enabled, description, matcher_re, repsonse)
+	VALUES (true, true, 'UwU', '(?i)uwu', CONCAT(E'\U0001F480', ' owo'))
 ;
 
 -- +migrate Down

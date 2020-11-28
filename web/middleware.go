@@ -52,13 +52,14 @@ func MiddlewareRequireAuth(next http.Handler) http.Handler {
 			}
 
 			// redirect to login
-			http.Redirect(w, r, "/login", http.StatusFound)
+			returnErrorPage(w, r, http.StatusUnauthorized, "")
 			return
 		} else {
 			user := r.Context().Value(UserKey).(*models.User)
 
 			if !user.Authorized && r.URL.Path != "/purgatory" {
 				http.Redirect(w, r, "/purgatory", http.StatusFound)
+				return
 			}
 		}
 
