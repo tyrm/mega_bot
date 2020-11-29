@@ -1,5 +1,5 @@
 [Add]
-description = "the word: add"
+description = "the word: add. like adding an item to a basket."
 other = "add"
 
 [AddResponder]

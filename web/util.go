@@ -48,8 +48,8 @@ func isValidUUID4(uuid string) bool {
 	return r.MatchString(uuid)
 }
 
-func roundUp(f float64) uint64 {
-	fint := uint64(f)
+func roundUp(f float64) int {
+	fint := int(f)
 
 	if f > float64(fint) {
 		fint++

@@ -13,9 +13,8 @@ import (
 type ResponderTemplate struct {
 	templateCommon
 
-	RMs         *[]models.ResponderMatcher
-	CurrentPage int
-	LastPage    int
+	RMs          *[]models.ResponderMatcher
+	RMPagination *[]templatePaginationItems
 
 	// i18n
 	ButtonAdd string
@@ -64,14 +63,16 @@ func GetResponder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get display count
-	displayCount := uint(20)
+	displayCount := 20
+	hrefCount := 0
 	if qCount, ok := r.URL.Query()["count"]; ok {
-		if len(qCount[0]) > 1 {
+		if len(qCount[0]) >= 1 {
 			uCount, err := strconv.ParseUint(qCount[0], 10, 32)
 			if err != nil {
 				logger.Debugf("invalid count: %s", qCount[0])
 			} else {
-				displayCount = uint(uCount)
+				displayCount = int(uCount)
+				hrefCount = int(uCount)
 			}
 		}
 	}
@@ -79,18 +80,21 @@ func GetResponder(w http.ResponseWriter, r *http.Request) {
 	pages := roundUp(float64(rmCount) / float64(displayCount))
 	logger.Debugf("pages: %d", pages)
 
-	// get display number
-	displayPage := uint(1)
+	// get display page
+	displayPage := 1
 	if qPage, ok := r.URL.Query()["page"]; ok {
-		if len(qPage[0]) > 1 {
+		if len(qPage[0]) >= 1 {
 			uPage, err := strconv.ParseUint(qPage[0], 10, 32)
 			if err != nil {
 				logger.Debugf("invalid page: %s", qPage[0])
 			} else {
-				displayPage = uint(uPage)
+				displayPage = int(uPage)
 			}
 		}
 	}
+
+	// mage pagination
+	tmplVars.RMPagination = makePagination(displayPage, pages, "/responder", hrefCount)
 
 	// get list of responders
 	rms, err := models.ReadResponderMatchersPage(displayPage-1, displayCount)

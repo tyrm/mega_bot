@@ -4,7 +4,7 @@ import "github.com/nicksnyder/go-i18n/v2/i18n"
 
 var textAdd = i18n.Message{
 	ID:          "Add",
-	Description: "the word: add",
+	Description: "the word: add. like add an item to a basket.",
 	Other:       "add",
 }
 
@@ -24,7 +24,7 @@ var textAdmin = i18n.Message{
 
 var textAlwaysRespond = i18n.Message{
 	ID:          "AlwaysRespond",
-	Description: "the phrase: add responder",
+	Description: "the phrase: always respond to match",
 	Other:       "always respond to match",
 }
 

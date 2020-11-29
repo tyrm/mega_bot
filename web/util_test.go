@@ -29,7 +29,7 @@ func TestIsValidUUID(t *testing.T) {
 func TestRoundUp(t *testing.T) {
 	tables := []struct {
 		x float64
-		n uint64
+		n int
 	}{
 		{0, 0},
 		{1, 1},

@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"github.com/gorilla/sessions"
 	"github.com/jinzhu/copier"
 	"github.com/markbates/pkger"
@@ -19,9 +20,8 @@ type templateAlert struct {
 
 type templateBreadcrumb struct {
 	HRef string
-	Text   string
+	Text string
 }
-
 
 type templateCommon struct {
 	HeadCSS          *[]templateHeadLink
@@ -103,6 +103,15 @@ type templateNavbarNode struct {
 	Disabled bool
 
 	Children []*templateNavbarNode
+}
+
+type templatePaginationItems struct {
+	Text        string
+	DisplayHTML string
+	HRef        string
+
+	Active   bool
+	Disabled bool
 }
 
 type templateVars interface {
@@ -240,4 +249,70 @@ func initTemplate(w http.ResponseWriter, r *http.Request, tmpl templateVars) err
 	}
 
 	return nil
+}
+
+func makePagination(page, count int, href string, hrefCount int) *[]templatePaginationItems {
+	displayItems := 5
+	startingNumber := 1
+
+	if count < displayItems {
+		// less than
+		displayItems = count
+	} else if page > count-displayItems/2 {
+		// end of the
+		startingNumber = count-displayItems+1
+	} else if page > displayItems/2 {
+		// center active
+		startingNumber = page - displayItems/2
+	}
+
+	var items []templatePaginationItems
+
+	// previous button
+	prevItem := templatePaginationItems{
+		Text:        "Previous",
+		DisplayHTML: "<i class=\"fas fa-caret-left\"></i>",
+	}
+	if page == 1 {
+		prevItem.Disabled = true
+	} else if hrefCount > 0 {
+		prevItem.HRef = fmt.Sprintf("%s?page=%d&count=%d", href, page-1, hrefCount)
+	} else {
+		prevItem.HRef = fmt.Sprintf("%s?page=%d", href, page-1)
+	}
+	items = append(items, prevItem)
+
+	// add pages
+	for i := 0; i < displayItems; i++ {
+		newItem := templatePaginationItems{
+			Text: fmt.Sprintf("%d", startingNumber+i),
+		}
+
+		if page == startingNumber+i {
+			newItem.Active = true
+		} else if hrefCount > 0 {
+			newItem.HRef = fmt.Sprintf("%s?page=%d&count=%d", href, startingNumber+i, hrefCount)
+		} else {
+			newItem.HRef = fmt.Sprintf("%s?page=%d", href, startingNumber+i)
+		}
+
+		items = append(items, newItem)
+	}
+
+	// next button
+	nextItem := templatePaginationItems{
+		Text:        "Next",
+		DisplayHTML: "<i class=\"fas fa-caret-right\"></i>",
+	}
+	if page == count {
+		nextItem.Disabled = true
+	} else if hrefCount > 0 {
+		nextItem.HRef = fmt.Sprintf("%s?page=%d&count=%d", href, page+1, hrefCount)
+	} else {
+		nextItem.HRef = fmt.Sprintf("%s?page=%d", href, page+1)
+	}
+	items = append(items, nextItem)
+
+	return &items
+
 }

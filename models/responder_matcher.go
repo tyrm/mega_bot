@@ -83,7 +83,7 @@ func ReadResponderMatcher(id string) (*ResponderMatcher, error) {
 	return &rm, nil
 }
 
-func ReadResponderMatchersPage(index, count uint) (*[]ResponderMatcher, error) {
+func ReadResponderMatchersPage(index, count int) (*[]ResponderMatcher, error) {
 	// Timing
 	start := time.Now()
 	defer logger.Tracef("ReadResponderMatchersPage(%d, %d) took %s",index, count, time.Since(start))
