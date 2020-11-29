@@ -25,12 +25,7 @@ type ResponderFormTemplate struct {
 	templateCommon
 	Breadcrumbs *[]templateBreadcrumb
 
-	AlwaysRespond bool
-	Description   string
-	Enabled       bool
-	ID            string
-	MatchRegex    string
-	Response      string
+	RM *models.ResponderMatcher
 
 	// i18n
 	ButtonSubmit       string
@@ -232,13 +227,7 @@ func GetResponderEdit(w http.ResponseWriter, r *http.Request) {
 		returnErrorPage(w, r, http.StatusNotFound, fmt.Sprintf("responder not found: %s", vars["responder"]))
 		return
 	}
-
-	tmplVars.AlwaysRespond = rm.AlwaysRespond
-	tmplVars.Description = rm.Description
-	tmplVars.Enabled = rm.Enabled
-	tmplVars.ID = rm.ID
-	tmplVars.MatchRegex = rm.MatcherString
-	tmplVars.Response = rm.Response
+	tmplVars.RM = rm
 
 	// i18n
 	locEditResponder, err := localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textEditResponder, PluralCount: 1})
@@ -305,5 +294,25 @@ func GetResponderEdit(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Errorf("could not render home template: %s", err.Error())
 	}
+
+}
+func PostResponderEdit(w http.ResponseWriter, r *http.Request) {
+	// get responder
+	vars := mux.Vars(r)
+	if !isValidUUID4(vars["responder"]) {
+		returnErrorPage(w, r, http.StatusBadRequest, "invalid id format")
+		return
+	}
+
+	// parse form data
+	err := r.ParseForm()
+	if err != nil {
+		returnErrorPage(w, r, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// validate regex
+	logger.Debugf("test re: %s" , r.Form)
+
 
 }

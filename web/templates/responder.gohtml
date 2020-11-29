@@ -26,7 +26,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{range $rm := .RMs}}
+                {{range .RMs}}
                     <tr>
                         <th scope="row">{{.Description}}</th>
                         <td>{{.MatcherString}}</td>
@@ -40,10 +40,12 @@
                             {{- end}}
                         </td>
                         <td class="text-right">
-                            <a href="/responder/edit/{{.ID}}" class="btn btn-sm btn-outline-primary"><i
-                                        class="fas fa-edit"></i></a>
-                            <a href="/responder/delete/{{.ID}}" class="btn btn-sm btn-outline-danger"><i
-                                        class="fas fa-trash-alt"></i></a>
+                            <a href="/responder/edit/{{.ID}}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="/responder/delete/{{.ID}}" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
                         </td>
                     </tr>
                 {{end}}
@@ -57,7 +59,7 @@
             <div class="p-2"></div>
         </div>
         <div class="col text-center">
-                {{- template "pagination" .RMPagination -}}
+            {{- if .RMPagination}}{{template "pagination" .RMPagination}}{{end -}}
         </div>
         <div class="col text-right">
             <div class="p-2">Flex item</div>
@@ -86,30 +88,31 @@
         <div class="col">
             <form method="post">
                 <div class="mb-3 custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="enabled" checked>
+                    <input type="checkbox" class="custom-control-input" id="enabled" name="enabled"{{ if .RM}}{{if .RM.Enabled}} checked{{end}}{{else}} checked{{end}}>
                     <label class="custom-control-label" for="enabled">{{.LabelEnabled}}</label>
                 </div>
-                {{- if .ID}}
+                {{ $labelID := .LabelID}}
+                {{- if .RM}}{{if .RM.ID}}
                     <div class="mb-3">
-                        <label for="id">{{.LabelID}}</label>
-                        <input type="text" class="form-control" id="id" value="{{.ID}}" disabled>
+                        <label for="id">{{$labelID}}</label>
+                        <input type="text" class="form-control" id="id" name="id" value="{{.RM.ID}}" disabled>
                     </div>
-                {{- end}}
+                {{- end}}{{end}}
                 <div class="mb-3">
                     <label for="description">{{.LabelDescription}}</label>
-                    <input type="text" class="form-control" id="description" placeholder="UwU"{{- if .Description}} value="{{.Description}}"{{end}} required>
+                    <input type="text" class="form-control" id="description" name="description" placeholder="UwU"{{- if .RM}} value="{{.RM.Description}}"{{end}} required>
                 </div>
                 <div class="mb-3">
                     <label for="regex">{{.LabelMatchRegex}}</label>
-                    <input type="text" class="form-control" id="regex" placeholder="(?i)uwu" required>
+                    <input type="text" class="form-control" id="regex" name="regex" placeholder="(?i)uwu"{{- if .RM}} value="{{.RM.MatcherString}}"{{end}} required>
                     <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="always-respond">
+                        <input type="checkbox" class="custom-control-input" id="always-respond" name="always-respond"{{ if .RM}}{{if .RM.AlwaysRespond}} checked{{end}}{{end}}>
                         <label class="custom-control-label" for="always-respond">{{.LabelAlwaysRespond}}</label>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="response">{{.LabelResponse}}</label>
-                    <input type="text" class="form-control" id="response" placeholder="owo" required>
+                    <input type="text" class="form-control" id="response" name="response" placeholder="owo"{{- if .RM}} value="{{.RM.Response}}"{{end}} required>
                 </div>
                 <hr class="mb-4">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">{{.ButtonSubmit}}</button>
