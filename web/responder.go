@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"mega_bot/models"
+	"mega_bot/responder"
 	"net/http"
 	"strconv"
 	"strings"
@@ -209,9 +210,10 @@ func PostResponderAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	responder.Upsert(&rm)
+
 	// redirect home
 	http.Redirect(w, r, "/responder", http.StatusFound)
-
 }
 
 func PostResponderEdit(w http.ResponseWriter, r *http.Request) {
@@ -266,6 +268,8 @@ func PostResponderEdit(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	responder.Upsert(&rm)
 
 	// redirect home
 	http.Redirect(w, r, "/responder", http.StatusFound)

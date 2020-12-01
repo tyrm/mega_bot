@@ -39,8 +39,8 @@ func worker(id int, c *chan *models.ResponderRequest) {
 				break
 			}
 		}
+		activeRespondersMutex.RUnlock()
 	}
-	activeRespondersMutex.RUnlock()
 
 	logger.Infof("responder worker %d stopping", id)
 }
