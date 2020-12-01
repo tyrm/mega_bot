@@ -75,7 +75,6 @@ func GetResponder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	pages := roundUp(float64(rmCount) / float64(displayCount))
-	logger.Debugf("pages: %d", pages)
 
 	// get display page
 	displayPage := 1
