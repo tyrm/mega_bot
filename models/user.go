@@ -6,16 +6,27 @@ import (
 )
 
 type User struct {
-	Email      string         `db:"email",json:"email"`
-	Password   sql.NullString `db:"password",json:"password"`
-	Nick       sql.NullString `db:"nick",json:"nick"`
-	Authorized bool           `db:"authorized",json:"authorized"`
-	Admin      bool           `db:"admin",json:"admin"`
+	Email    string         `db:"email",json:"email"`
+	Password sql.NullString `db:"password",json:"password"`
+	Nick     sql.NullString `db:"nick",json:"nick"`
 
 	// metadata
 	ID        string    `db:"id",json:"id"`
 	CreatedAt time.Time `db:"created_at",json:"created_at"`
 	UpdatedAt time.Time `db:"updated_at",json:"updated_at"`
+}
+
+func (u *User) HasOneOfRoles(roles []string) (bool, error) {
+	roleCount, err := CountRolesByUserIDRoles(u.ID, roles)
+	if err != nil {
+		return false, err
+	}
+
+	if roleCount == 0 {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 func CreateUser(u *User) error {
@@ -24,9 +35,9 @@ func CreateUser(u *User) error {
 	defer logger.Tracef("CreateUser() took %s", time.Since(start))
 
 	err := client.
-		QueryRowx(`INSERT INTO public.users(email, password, nick, authorized, admin) 
-        	VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, updated_at;`, u.Email, u.Password, u.Nick,
-        	u.Authorized, u.Admin).Scan(&u.ID, &u.CreatedAt, &u.UpdatedAt)
+		QueryRowx(`INSERT INTO public.users(email, password, nick) 
+        	VALUES ($1, $2, $3) RETURNING id, created_at, updated_at;`, u.Email, u.Password, u.Nick).
+		Scan(&u.ID, &u.CreatedAt, &u.UpdatedAt)
 	return err
 }
 

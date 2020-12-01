@@ -13,7 +13,13 @@ func GetPurgatory(w http.ResponseWriter, r *http.Request) {
 	if r.Context().Value(UserKey) != nil {
 		user := r.Context().Value(UserKey).(*models.User)
 
-		if user.Authorized {
+		authorized, err := user.HasOneOfRoles([]string{"administrator", "operator", "authorized"})
+		if err != nil {
+			returnErrorPage(w, r, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		if authorized {
 			// redirect to home, user is authorized
 			http.Redirect(w, r, "/", http.StatusFound)
 			return

@@ -5,7 +5,7 @@ CREATE TABLE "public"."responder_matchers" (
     enabled boolean NOT NULL,
     description character varying NOT NULL,
     matcher_re character varying NOT NULL,
-    repsonse character varying NOT NULL,
+    response character varying NOT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY ("id")
@@ -13,7 +13,7 @@ CREATE TABLE "public"."responder_matchers" (
 ;
 
 INSERT INTO public.responder_matchers(
-	always_respond, enabled, description, matcher_re, repsonse)
+	always_respond, enabled, description, matcher_re, response)
 	VALUES (true, true, 'UwU', '(?i)uwu', CONCAT(E'\U0001F480', ' owo'))
 ;
 

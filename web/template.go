@@ -216,8 +216,8 @@ func initTemplate(w http.ResponseWriter, r *http.Request, tmpl templateVars) err
 
 	// add alerts
 	if us.Values["page-alert-error"] != nil {
-		alert := us.Values["page-alert-error"].(*templateAlert)
-		tmpl.SetAlertError(alert)
+		alert := us.Values["page-alert-error"].(templateAlert)
+		tmpl.SetAlertError(&alert)
 
 		us.Values["page-alert-error"] = nil
 		saveSession = true
@@ -225,16 +225,16 @@ func initTemplate(w http.ResponseWriter, r *http.Request, tmpl templateVars) err
 	}
 
 	if us.Values["page-alert-success"] != nil {
-		alert := us.Values["page-alert-success"].(*templateAlert)
-		tmpl.SetAlertSuccess(alert)
+		alert := us.Values["page-alert-success"].(templateAlert)
+		tmpl.SetAlertSuccess(&alert)
 
 		us.Values["page-alert-success"] = nil
 		saveSession = true
 	}
 
 	if us.Values["page-alert-warn"] != nil {
-		alert := us.Values["page-alert-warn"].(*templateAlert)
-		tmpl.SetAlertWarn(alert)
+		alert := us.Values["page-alert-warn"].(templateAlert)
+		tmpl.SetAlertWarn(&alert)
 
 		us.Values["page-alert-warn"] = nil
 		saveSession = true

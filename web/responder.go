@@ -3,6 +3,7 @@ package web
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"mega_bot/models"
 	"net/http"
@@ -124,93 +125,19 @@ func GetResponderAdd(w http.ResponseWriter, r *http.Request) {
 	// get localizer
 	localizer := r.Context().Value(LocalizerKey).(*i18n.Localizer)
 
-	// Init template variables
-	tmplVars := &ResponderFormTemplate{}
-	err := initTemplate(w, r, tmplVars)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	// i18n
 	locAddResponder, err := localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textAddResponder, PluralCount: 1})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
-	tmplVars.PageTitle = strings.Title(locAddResponder)
-	tmplVars.Header = strings.Title(locAddResponder)
-	tmplVars.ButtonSubmit = strings.Title(locAddResponder)
 
-	tmplVars.LabelAlwaysRespond, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textAlwaysRespond})
-	if err != nil {
-		logger.Warningf("missing translation: %s", err.Error())
-	}
-	tmplVars.LabelAlwaysRespond = strings.Title(tmplVars.LabelAlwaysRespond)
-
-	tmplVars.LabelDescription, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textDescription, PluralCount: 1})
-	if err != nil {
-		logger.Warningf("missing translation: %s", err.Error())
-	}
-	tmplVars.LabelDescription = strings.Title(tmplVars.LabelDescription)
-
-	tmplVars.LabelEnabled, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textEnabled})
-	if err != nil {
-		logger.Warningf("missing translation: %s", err.Error())
-	}
-	tmplVars.LabelEnabled = strings.Title(tmplVars.LabelEnabled)
-
-	tmplVars.LabelID, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textID})
-	if err != nil {
-		logger.Warningf("missing translation: %s", err.Error())
-	}
-
-	tmplVars.LabelMatchRegex, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textMatchRegex, PluralCount: 1})
-	if err != nil {
-		logger.Warningf("missing translation: %s", err.Error())
-	}
-	tmplVars.LabelMatchRegex = strings.Title(tmplVars.LabelMatchRegex)
-
-	tmplVars.LabelResponse, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textResponse, PluralCount: 1})
-	if err != nil {
-		logger.Warningf("missing translation: %s", err.Error())
-	}
-	tmplVars.LabelResponse = strings.Title(tmplVars.LabelResponse)
-
-	locResponder, err := localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textResponder, PluralCount: 1})
-	if err != nil {
-		logger.Warningf("missing translation: %s", err.Error())
-	}
-
-	// breadcrumbs
-	breadcrumbs := []templateBreadcrumb{
-		{
-			HRef: "/responder",
-			Text: strings.Title(locResponder),
-		},
-		{
-			Text: strings.Title(locAddResponder),
-		},
-	}
-	tmplVars.Breadcrumbs = &breadcrumbs
-
-	err = templates.ExecuteTemplate(w, "responder_form", tmplVars)
-	if err != nil {
-		logger.Errorf("could not render home template: %s", err.Error())
-	}
+	returnResponderForm(w, r, nil, locAddResponder)
 
 }
 
 func GetResponderEdit(w http.ResponseWriter, r *http.Request) {
 	// get localizer
 	localizer := r.Context().Value(LocalizerKey).(*i18n.Localizer)
-
-	// Init template variables
-	tmplVars := &ResponderFormTemplate{}
-	err := initTemplate(w, r, tmplVars)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 
 	// get responder
 	vars := mux.Vars(r)
@@ -227,16 +154,142 @@ func GetResponderEdit(w http.ResponseWriter, r *http.Request) {
 		returnErrorPage(w, r, http.StatusNotFound, fmt.Sprintf("responder not found: %s", vars["responder"]))
 		return
 	}
-	tmplVars.RM = rm
 
 	// i18n
 	locEditResponder, err := localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textEditResponder, PluralCount: 1})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
-	tmplVars.PageTitle = strings.Title(locEditResponder)
-	tmplVars.Header = strings.Title(locEditResponder)
-	tmplVars.ButtonSubmit = strings.Title(locEditResponder)
+
+	returnResponderForm(w, r, rm, locEditResponder)
+}
+
+func PostResponderAdd(w http.ResponseWriter, r *http.Request) {
+	// parse form data
+	err := r.ParseForm()
+	if err != nil {
+		returnErrorPage(w, r, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	rm := models.ResponderMatcher{
+		AlwaysRespond: false,
+		Description:   r.Form.Get("description"),
+		Enabled:       false,
+		MatcherString: r.Form.Get("regex"),
+		Response:      r.Form.Get("response"),
+	}
+
+	if r.Form.Get("enabled") == "on" {
+		rm.Enabled = true
+	}
+
+	if r.Form.Get("always-respond") == "on" {
+		rm.AlwaysRespond = true
+	}
+
+	// validate regex
+	err = rm.BuildRE()
+	if err != nil {
+		returnErrorPage(w, r, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = models.CreateResponderMatcher(&rm)
+	if err != nil {
+		returnErrorPage(w, r, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	us := r.Context().Value(SessionKey).(*sessions.Session)
+	us.Values["page-alert-success"] = templateAlert{Text: "Responder added"}
+	err = us.Save(r, w)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// redirect home
+	http.Redirect(w, r, "/responder", http.StatusFound)
+
+}
+
+func PostResponderEdit(w http.ResponseWriter, r *http.Request) {
+	// get responder
+	vars := mux.Vars(r)
+	if !isValidUUID4(vars["responder"]) {
+		returnErrorPage(w, r, http.StatusBadRequest, "invalid id format")
+		return
+	}
+
+	// parse form data
+	err := r.ParseForm()
+	if err != nil {
+		returnErrorPage(w, r, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	rm := models.ResponderMatcher{
+		ID:            vars["responder"],
+		AlwaysRespond: false,
+		Description:   r.Form.Get("description"),
+		Enabled:       false,
+		MatcherString: r.Form.Get("regex"),
+		Response:      r.Form.Get("response"),
+	}
+
+	if r.Form.Get("enabled") == "on" {
+		rm.Enabled = true
+	}
+
+	if r.Form.Get("always-respond") == "on" {
+		rm.AlwaysRespond = true
+	}
+
+	// validate regex
+	err = rm.BuildRE()
+	if err != nil {
+		returnErrorPage(w, r, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = models.UpdateResponderMatcher(&rm)
+	if err != nil {
+		returnErrorPage(w, r, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	us := r.Context().Value(SessionKey).(*sessions.Session)
+	us.Values["page-alert-success"] = templateAlert{Text: "Responder updated"}
+	err = us.Save(r, w)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// redirect home
+	http.Redirect(w, r, "/responder", http.StatusFound)
+}
+
+func returnResponderForm(w http.ResponseWriter, r *http.Request, rm *models.ResponderMatcher, actionText string) {
+	// get localizer
+	localizer := r.Context().Value(LocalizerKey).(*i18n.Localizer)
+
+	// Init template variables
+	tmplVars := &ResponderFormTemplate{}
+	err := initTemplate(w, r, tmplVars)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// set
+	tmplVars.RM = rm
+
+	// i18n
+	tmplVars.PageTitle = strings.Title(actionText)
+	tmplVars.Header = strings.Title(actionText)
+	tmplVars.ButtonSubmit = strings.Title(actionText)
 
 	tmplVars.LabelAlwaysRespond, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textAlwaysRespond})
 	if err != nil {
@@ -285,7 +338,7 @@ func GetResponderEdit(w http.ResponseWriter, r *http.Request) {
 			Text: strings.Title(locResponder),
 		},
 		{
-			Text: strings.Title(locEditResponder),
+			Text: strings.Title(actionText),
 		},
 	}
 	tmplVars.Breadcrumbs = &breadcrumbs
@@ -294,25 +347,4 @@ func GetResponderEdit(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Errorf("could not render home template: %s", err.Error())
 	}
-
-}
-func PostResponderEdit(w http.ResponseWriter, r *http.Request) {
-	// get responder
-	vars := mux.Vars(r)
-	if !isValidUUID4(vars["responder"]) {
-		returnErrorPage(w, r, http.StatusBadRequest, "invalid id format")
-		return
-	}
-
-	// parse form data
-	err := r.ParseForm()
-	if err != nil {
-		returnErrorPage(w, r, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	// validate regex
-	logger.Debugf("test re: %s" , r.Form)
-
-
 }

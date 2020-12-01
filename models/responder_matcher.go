@@ -8,10 +8,10 @@ import (
 
 type ResponderMatcher struct {
 	AlwaysRespond bool           `db:"always_respond",json:"always_respond"` // if false search for me string or DM = true.
-	Enabled       bool           `db:"enabled",json:"enabled"`
 	Description   string         `db:"description",json:"description"`
+	Enabled       bool           `db:"enabled",json:"enabled"`
 	MatcherString string         `db:"matcher_re",json:"matcher_re"`
-	Response      string         `db:"repsonse",json:"repsonse"`
+	Response      string         `db:"response",json:"response"`
 	MatcherRE     *regexp.Regexp `json:"-"` // regex to match message
 
 	// metadata
@@ -42,6 +42,18 @@ func CountResponderMatchers() (uint64, error) {
 	}
 
 	return count, nil
+}
+
+func CreateResponderMatcher(rm *ResponderMatcher) error {
+	// Timing
+	start := time.Now()
+	defer logger.Tracef("CreateResponderMatcher() took %s", time.Since(start))
+
+	err := client.
+		QueryRowx(`INSERT INTO public.responder_matchers(always_respond, description, enabled, matcher_re, response) 
+        	VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, updated_at;`, rm.AlwaysRespond, rm.Description, rm.Enabled, rm.MatcherString, rm.Response).
+		Scan(&rm.ID, &rm.CreatedAt, &rm.UpdatedAt)
+	return err
 }
 
 func ReadEnabledResponderMatchers() (*[]ResponderMatcher, error) {
@@ -107,4 +119,17 @@ func ReadResponderMatchersPage(index, count int) (*[]ResponderMatcher, error) {
 	}
 
 	return &rmsResponse, nil
+}
+
+func UpdateResponderMatcher(rm *ResponderMatcher) error {
+	// Timing
+	start := time.Now()
+	defer logger.Tracef("UpdateResponderMatcher(%s) took %s", rm.ID, time.Since(start))
+
+	err := client.
+		QueryRowx(`UPDATE public.responder_matchers
+			SET always_respond=$1, description=$2, enabled=$3, matcher_re=$4, response=$5, updated_at=CURRENT_TIMESTAMP
+			WHERE id=$6 RETURNING created_at, updated_at;`, rm.AlwaysRespond, rm.Description, rm.Enabled,
+			rm.MatcherString, rm.Response, rm.ID).Scan(&rm.CreatedAt, &rm.UpdatedAt)
+	return err
 }

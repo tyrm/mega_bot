@@ -2,7 +2,6 @@ package web
 
 import (
 	"context"
-	"github.com/gorilla/sessions"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"mega_bot/models"
 	"net/http"
@@ -41,23 +40,19 @@ func MiddlewareRequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		if r.Context().Value(UserKey) == nil {
-			us := r.Context().Value(SessionKey).(*sessions.Session)
-
-			// Save current page
-			us.Values["login-redirect"] = r.URL.Path
-			err := us.Save(r, w)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
 			// redirect to login
 			returnErrorPage(w, r, http.StatusUnauthorized, "")
 			return
 		} else {
 			user := r.Context().Value(UserKey).(*models.User)
 
-			if !user.Authorized && r.URL.Path != "/purgatory" {
+			authorized, err := user.HasOneOfRoles([]string{"administrator", "operator", "authorized"})
+			if err != nil {
+				returnErrorPage(w, r, http.StatusInternalServerError, err.Error())
+				return
+			}
+
+			if !authorized && r.URL.Path != "/purgatory" {
 				http.Redirect(w, r, "/purgatory", http.StatusFound)
 				return
 			}

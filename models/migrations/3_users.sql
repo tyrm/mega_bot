@@ -4,8 +4,6 @@ CREATE TABLE "public"."users" (
     email character varying NOT NULL UNIQUE,
     password character varying,
     nick character varying,
-    authorized boolean NOT NULL DEFAULT false,
-    admin boolean NOT NULL DEFAULT false,
     created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY ("id")
