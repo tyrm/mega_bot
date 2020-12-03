@@ -29,6 +29,9 @@ type ResponderFormTemplate struct {
 
 	RM *models.ResponderMatcher
 
+	ButtonColor  string
+	FormDisabled bool
+
 	// i18n
 	ButtonSubmit       string
 	Header             string
@@ -131,8 +134,54 @@ func GetResponderAdd(w http.ResponseWriter, r *http.Request) {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
 
-	returnResponderForm(w, r, nil, locAddResponder)
+	tmplVars := &ResponderFormTemplate{}
 
+	tmplVars.PageTitle = strings.Title(locAddResponder)
+	tmplVars.Header = strings.Title(locAddResponder)
+	tmplVars.ButtonSubmit = strings.Title(locAddResponder)
+
+	returnResponderForm(w, r, tmplVars)
+
+}
+
+func GetResponderDelete(w http.ResponseWriter, r *http.Request) {
+	// get localizer
+	localizer := r.Context().Value(LocalizerKey).(*i18n.Localizer)
+
+	// get responder
+	vars := mux.Vars(r)
+	if !isValidUUID4(vars["responder"]) {
+		returnErrorPage(w, r, http.StatusBadRequest, "invalid id format")
+		return
+	}
+	rm, err := models.ReadResponderMatcher(vars["responder"])
+	if err != nil {
+		returnErrorPage(w, r, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if rm == nil {
+		returnErrorPage(w, r, http.StatusNotFound, fmt.Sprintf("responder not found: %s", vars["responder"]))
+		return
+	}
+
+	// i18n
+	locDeleteResponder, err := localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textDeleteResponder, PluralCount: 1})
+	if err != nil {
+		logger.Warningf("missing translation: %s", err.Error())
+	}
+
+	tmplVars := &ResponderFormTemplate{}
+
+	tmplVars.PageTitle = strings.Title(locDeleteResponder)
+	tmplVars.Header = strings.Title(locDeleteResponder)
+	tmplVars.ButtonSubmit = strings.Title(locDeleteResponder)
+
+	tmplVars.RM = rm
+
+	tmplVars.FormDisabled = true
+	tmplVars.ButtonColor = "danger"
+
+	returnResponderForm(w, r, tmplVars)
 }
 
 func GetResponderEdit(w http.ResponseWriter, r *http.Request) {
@@ -161,7 +210,15 @@ func GetResponderEdit(w http.ResponseWriter, r *http.Request) {
 		logger.Warningf("missing translation: %s", err.Error())
 	}
 
-	returnResponderForm(w, r, rm, locEditResponder)
+	tmplVars := &ResponderFormTemplate{}
+
+	tmplVars.PageTitle = strings.Title(locEditResponder)
+	tmplVars.Header = strings.Title(locEditResponder)
+	tmplVars.ButtonSubmit = strings.Title(locEditResponder)
+
+	tmplVars.RM = rm
+
+	returnResponderForm(w, r, tmplVars)
 }
 
 func PostResponderAdd(w http.ResponseWriter, r *http.Request) {
@@ -274,26 +331,18 @@ func PostResponderEdit(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/responder", http.StatusFound)
 }
 
-func returnResponderForm(w http.ResponseWriter, r *http.Request, rm *models.ResponderMatcher, actionText string) {
+func returnResponderForm(w http.ResponseWriter, r *http.Request, tmplVars *ResponderFormTemplate) {
 	// get localizer
 	localizer := r.Context().Value(LocalizerKey).(*i18n.Localizer)
 
 	// Init template variables
-	tmplVars := &ResponderFormTemplate{}
 	err := initTemplate(w, r, tmplVars)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// set
-	tmplVars.RM = rm
-
 	// i18n
-	tmplVars.PageTitle = strings.Title(actionText)
-	tmplVars.Header = strings.Title(actionText)
-	tmplVars.ButtonSubmit = strings.Title(actionText)
-
 	tmplVars.LabelAlwaysRespond, err = localizer.Localize(&i18n.LocalizeConfig{DefaultMessage: &textAlwaysRespond})
 	if err != nil {
 		logger.Warningf("missing translation: %s", err.Error())
@@ -341,7 +390,7 @@ func returnResponderForm(w http.ResponseWriter, r *http.Request, rm *models.Resp
 			Text: strings.Title(locResponder),
 		},
 		{
-			Text: strings.Title(actionText),
+			Text: tmplVars.Header,
 		},
 	}
 	tmplVars.Breadcrumbs = &breadcrumbs

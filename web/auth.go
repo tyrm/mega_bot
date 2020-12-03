@@ -83,6 +83,14 @@ func authProviderCallback(w http.ResponseWriter, r *http.Request, gu goth.User) 
 			ProviderUserID: gu.UserID,
 			UserID: loggedInUser.ID,
 		}
+		if gu.Name != "" {
+			newCa.ProviderUsername.String = gu.Name
+			newCa.ProviderUsername.Valid = true
+		}
+		if gu.AvatarURL != "" {
+			newCa.ProviderAvatar.String = gu.AvatarURL
+			newCa.ProviderAvatar.Valid = true
+		}
 
 		err := models.CreateConnectedAccount(&newCa)
 		if err != nil {
@@ -157,6 +165,14 @@ func authProviderCallback(w http.ResponseWriter, r *http.Request, gu goth.User) 
 			Provider: gu.Provider,
 			ProviderUserID: gu.UserID,
 			UserID: newUser.ID,
+		}
+		if gu.Name != "" {
+			newCa.ProviderUsername.String = gu.Name
+			newCa.ProviderUsername.Valid = true
+		}
+		if gu.AvatarURL != "" {
+			newCa.ProviderAvatar.String = gu.AvatarURL
+			newCa.ProviderAvatar.Valid = true
 		}
 
 		err = models.CreateConnectedAccount(&newCa)

@@ -88,7 +88,7 @@
         <div class="col">
             <form method="post">
                 <div class="mb-3 custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="enabled" name="enabled"{{ if .RM}}{{if .RM.Enabled}} checked{{end}}{{else}} checked{{end}}>
+                    <input type="checkbox" class="custom-control-input" id="enabled" name="enabled"{{ if .RM}}{{if .RM.Enabled}} checked{{end}}{{else}} checked{{end}}{{if .FormDisabled}} disabled{{end}}>
                     <label class="custom-control-label" for="enabled">{{.LabelEnabled}}</label>
                 </div>
                 {{ $labelID := .LabelID}}
@@ -100,22 +100,22 @@
                 {{- end}}{{end}}
                 <div class="mb-3">
                     <label for="description">{{.LabelDescription}}</label>
-                    <input type="text" class="form-control" id="description" name="description" placeholder="UwU"{{- if .RM}} value="{{.RM.Description}}"{{end}} required>
+                    <input type="text" class="form-control" id="description" name="description" placeholder="UwU"{{- if .RM}} value="{{.RM.Description}}"{{end}} required{{if .FormDisabled}} disabled{{end}}>
                 </div>
                 <div class="mb-3">
                     <label for="regex">{{.LabelMatchRegex}}</label>
-                    <input type="text" class="form-control" id="regex" name="regex" placeholder="(?i)uwu"{{- if .RM}} value="{{.RM.MatcherString}}"{{end}} required>
+                    <input type="text" class="form-control" id="regex" name="regex" placeholder="(?i)uwu"{{- if .RM}} value="{{.RM.MatcherString}}"{{end}} required{{if .FormDisabled}} disabled{{end}}>
                     <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="always-respond" name="always-respond"{{ if .RM}}{{if .RM.AlwaysRespond}} checked{{end}}{{end}}>
+                        <input type="checkbox" class="custom-control-input" id="always-respond" name="always-respond"{{ if .RM}}{{if .RM.AlwaysRespond}} checked{{end}}{{end}}{{if .FormDisabled}} disabled{{end}}>
                         <label class="custom-control-label" for="always-respond">{{.LabelAlwaysRespond}}</label>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="response">{{.LabelResponse}}</label>
-                    <input type="text" class="form-control" id="response" name="response" placeholder="owo"{{- if .RM}} value="{{.RM.Response}}"{{end}} required>
+                    <input type="text" class="form-control" id="response" name="response" placeholder="owo"{{- if .RM}} value="{{.RM.Response}}"{{end}} required{{if .FormDisabled}} disabled{{end}}>
                 </div>
                 <hr class="mb-4">
-                <button class="btn btn-primary btn-lg btn-block" type="submit">{{.ButtonSubmit}}</button>
+                <button class="btn btn-{{if .ButtonColor}}{{.ButtonColor}}{{else}}primary{{end}} btn-lg btn-block" type="submit">{{.ButtonSubmit}}</button>
             </form>
         </div>
     </div>

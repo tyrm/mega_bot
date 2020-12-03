@@ -5,16 +5,20 @@ import (
 	"github.com/juju/loggo"
 	_ "github.com/lib/pq"
 	"github.com/markbates/pkger"
+	"github.com/patrickmn/go-cache"
 	"github.com/rubenv/sql-migrate"
+	"gopkg.in/alexcesaro/statsd.v2"
 	"mega_bot/config"
 )
 
 var (
-	client *sqlx.DB
-	logger *loggo.Logger
+	client         *sqlx.DB
+	logger         *loggo.Logger
+	stats          *statsd.Client
+	cHasOneOfRoles *cache.Cache
 )
 
-func Init(conf *config.Config) error {
+func Init(conf *config.Config, sdc *statsd.Client) error {
 	// Init Logging
 	newLogger := loggo.GetLogger("models")
 	logger = &newLogger
@@ -24,6 +28,9 @@ func Init(conf *config.Config) error {
 	if err != nil {
 		return err
 	}
+
+	// Statsd
+	stats = sdc.Clone(statsd.Prefix("models"))
 
 	// Do Migration
 	logger.Debugf("Loading Migrations")

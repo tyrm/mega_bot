@@ -24,6 +24,8 @@ type Config struct {
 	RedisPassword string
 
 	ResponderWorkers int
+
+	StatsDAddress string
 }
 
 func CollectConfig() *Config {
@@ -84,6 +86,14 @@ func CollectConfig() *Config {
 			panic(err)
 		}
 		config.ResponderWorkers = i
+	}
+
+	// LOG_LEVEL
+	var envStatsDAddress = os.Getenv("STATSD_ADDRESS")
+	if envStatsDAddress == "" {
+		config.StatsDAddress = ":8125"
+	} else {
+		config.StatsDAddress = envStatsDAddress
 	}
 
 	// Validation

@@ -31,8 +31,7 @@ func (u *User) HasOneOfRoles(roles []string) (bool, error) {
 
 func CreateUser(u *User) error {
 	// Timing
-	start := time.Now()
-	defer logger.Tracef("CreateUser() took %s", time.Since(start))
+	defer stats.NewTiming().Send("CreateUser")
 
 	err := client.
 		QueryRowx(`INSERT INTO public.users(email, password, nick) 
@@ -42,6 +41,9 @@ func CreateUser(u *User) error {
 }
 
 func ReadUser(id string) (*User, error) {
+	// Timing
+	defer stats.NewTiming().Send("ReadUser")
+
 	var user User
 
 	err := client.Get(&user, "SELECT * FROM users WHERE id = $1;", id)
@@ -55,6 +57,9 @@ func ReadUser(id string) (*User, error) {
 }
 
 func ReadUserByEmail(e string) (*User, error) {
+	// Timing
+	defer stats.NewTiming().Send("ReadUserByEmail")
+
 	var user User
 
 	err := client.Get(&user, "SELECT * FROM users WHERE email = $1;", e)

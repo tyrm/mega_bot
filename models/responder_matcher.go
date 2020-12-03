@@ -32,8 +32,7 @@ func (rm *ResponderMatcher) BuildRE() error {
 
 func CountResponderMatchers() (uint64, error) {
 	// Timing
-	start := time.Now()
-	defer logger.Tracef("CountResponderMatchers() took %s", time.Since(start))
+	defer stats.NewTiming().Send("CountResponderMatchers")
 
 	var count uint64
 	err := client.Get(&count, "SELECT count(id) FROM responder_matchers;")
@@ -46,8 +45,7 @@ func CountResponderMatchers() (uint64, error) {
 
 func CreateResponderMatcher(rm *ResponderMatcher) error {
 	// Timing
-	start := time.Now()
-	defer logger.Tracef("CreateResponderMatcher() took %s", time.Since(start))
+	defer stats.NewTiming().Send("CreateResponderMatcher")
 
 	err := client.
 		QueryRowx(`INSERT INTO public.responder_matchers(always_respond, description, enabled, matcher_re, response) 
@@ -58,8 +56,7 @@ func CreateResponderMatcher(rm *ResponderMatcher) error {
 
 func ReadEnabledResponderMatchers() (*[]ResponderMatcher, error) {
 	// Timing
-	start := time.Now()
-	defer logger.Tracef("ReadEnabledResponderMatchers() took %s", time.Since(start))
+	defer stats.NewTiming().Send("ReadEnabledResponderMatchers")
 
 	var rms []*ResponderMatcher
 	err := client.Select(&rms, "SELECT * FROM responder_matchers WHERE enabled = TRUE ORDER BY id;")
@@ -81,8 +78,7 @@ func ReadEnabledResponderMatchers() (*[]ResponderMatcher, error) {
 
 func ReadResponderMatcher(id string) (*ResponderMatcher, error) {
 	// Timing
-	start := time.Now()
-	defer logger.Tracef("ReadEnabledResponderMatcher() took %s", time.Since(start))
+	defer stats.NewTiming().Send("ReadResponderMatcher")
 
 	var rm ResponderMatcher
 	err := client.Get(&rm, "SELECT * FROM responder_matchers WHERE id = $1;", id)
@@ -97,8 +93,7 @@ func ReadResponderMatcher(id string) (*ResponderMatcher, error) {
 
 func ReadResponderMatchersPage(index, count int) (*[]ResponderMatcher, error) {
 	// Timing
-	start := time.Now()
-	defer logger.Tracef("ReadResponderMatchersPage(%d, %d) took %s",index, count, time.Since(start))
+	defer stats.NewTiming().Send("ReadResponderMatchersPage")
 
 	var rms []*ResponderMatcher
 
@@ -123,8 +118,7 @@ func ReadResponderMatchersPage(index, count int) (*[]ResponderMatcher, error) {
 
 func UpdateResponderMatcher(rm *ResponderMatcher) error {
 	// Timing
-	start := time.Now()
-	defer logger.Tracef("UpdateResponderMatcher(%s) took %s", rm.ID, time.Since(start))
+	defer stats.NewTiming().Send("UpdateResponderMatcher")
 
 	err := client.
 		QueryRowx(`UPDATE public.responder_matchers

@@ -99,6 +99,7 @@ func Init(conf *config.Config) error {
 	protected.HandleFunc("/responder", GetResponder).Methods("GET")
 	protected.HandleFunc("/responder/add", GetResponderAdd).Methods("GET")
 	protected.HandleFunc("/responder/add", PostResponderAdd).Methods("POST")
+	protected.HandleFunc("/responder/delete/{responder}", GetResponderDelete).Methods("GET")
 	protected.HandleFunc("/responder/edit/{responder}", GetResponderEdit).Methods("GET")
 	protected.HandleFunc("/responder/edit/{responder}", PostResponderEdit).Methods("POST")
 

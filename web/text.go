@@ -28,6 +28,13 @@ var textAlwaysRespond = i18n.Message{
 	Other:       "always respond to match",
 }
 
+var textDeleteResponder = i18n.Message{
+	ID:          "DeleteResponder",
+	Description: "the phrase: delete responder",
+	One:         "delete responder",
+	Other:       "delete responders",
+}
+
 var textDescription = i18n.Message{
 	ID:          "Description",
 	Description: "the word: description",

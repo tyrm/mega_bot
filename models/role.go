@@ -18,12 +18,8 @@ type Role struct {
 }
 
 func CountRolesByUserIDRoles(user_id string, roles []string) (int, error) {
-	// Check Cache
-
 	// Timing
-	cacheString := "MISS"
-	start := time.Now()
-	defer logger.Tracef("CountRolesByUserIDRoles() took %s %s", time.Since(start), cacheString)
+	defer stats.NewTiming().Send("CountRolesByUserIDRoles")
 
 	var count int
 	err := client.Get(&count, "SELECT count(u.id) FROM users as u " +
