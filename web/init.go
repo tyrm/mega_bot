@@ -10,6 +10,7 @@ import (
 	"github.com/markbates/goth/providers/discord"
 	"github.com/markbates/pkger"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"gopkg.in/alexcesaro/statsd.v2"
 	"gopkg.in/boj/redistore.v1"
 	"html/template"
 	"mega_bot/config"
@@ -21,10 +22,12 @@ import (
 const SessionKey contextKey = 0
 const UserKey contextKey = 1
 const LocalizerKey contextKey = 2
+const StartTimestampKey contextKey = 3
 
 var (
 	langBundle *i18n.Bundle
 	logger     *loggo.Logger
+	stats          *statsd.Client
 	store      *redistore.RediStore
 	templates  *template.Template
 )
@@ -35,9 +38,12 @@ func Close() {
 	store.Close()
 }
 
-func Init(conf *config.Config) error {
+func Init(conf *config.Config, sdc *statsd.Client) error {
 	newLogger := loggo.GetLogger("web")
 	logger = &newLogger
+
+	// Statsd
+	stats = sdc.Clone(statsd.Prefix("web"))
 
 	// Load Templates
 	templateDir := pkger.Include("/web/templates")

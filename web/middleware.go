@@ -9,6 +9,9 @@ import (
 
 func Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := stats.NewTiming()
+		ctx := context.WithValue(r.Context(), StartTimestampKey, start)
+
 		// Init Session
 		us, err := store.Get(r, "megabot")
 		if err != nil {
@@ -16,7 +19,7 @@ func Middleware(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		ctx := context.WithValue(r.Context(), SessionKey, us)
+		ctx = context.WithValue(ctx, SessionKey, us)
 
 		// Retrieve our user and type-assert it
 		val := us.Values["user"]
