@@ -30,11 +30,11 @@ func (rm *ResponderMatcher) BuildRE() error {
 	return nil
 }
 
-func CountResponderMatchers() (uint64, error) {
+func CountResponderMatchers() (int, error) {
 	// Timing
 	defer stats.NewTiming().Send("CountResponderMatchers")
 
-	var count uint64
+	var count int
 	err := client.Get(&count, "SELECT count(id) FROM responder_matchers;")
 	if err != nil {
 		return 0, err

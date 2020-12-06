@@ -57,9 +57,9 @@ func makeNavbar(r *http.Request) (navbar *[]templateNavbarNode) {
 			Children: []*templateNavbarNode{
 				{
 					Text:     natbarTextUsers,
-					MatchStr: "^/admin/users/.*$",
+					MatchStr: "^/admin/users.*$",
 					FAIcon:   "user",
-					URL:      "/admin/users/",
+					URL:      "/admin/users",
 				},
 			},
 		},

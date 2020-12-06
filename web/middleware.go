@@ -3,14 +3,14 @@ package web
 import (
 	"context"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"gopkg.in/alexcesaro/statsd.v2"
 	"mega_bot/models"
 	"net/http"
 )
 
 func Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := stats.NewTiming()
-		ctx := context.WithValue(r.Context(), StartTimestampKey, start)
+		startTime := stats.Clone(statsd.Tags("path", r.URL.Path, "method", r.Method)).NewTiming()
 
 		// Init Session
 		us, err := store.Get(r, "megabot")
@@ -19,7 +19,7 @@ func Middleware(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		ctx = context.WithValue(ctx, SessionKey, us)
+		ctx := context.WithValue(r.Context(), SessionKey, us)
 
 		// Retrieve our user and type-assert it
 		val := us.Values["user"]
@@ -36,6 +36,8 @@ func Middleware(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, LocalizerKey, localizer)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
+
+		startTime.Send("response")
 	})
 }
 

@@ -22,12 +22,11 @@ import (
 const SessionKey contextKey = 0
 const UserKey contextKey = 1
 const LocalizerKey contextKey = 2
-const StartTimestampKey contextKey = 3
 
 var (
 	langBundle *i18n.Bundle
 	logger     *loggo.Logger
-	stats          *statsd.Client
+	stats      *statsd.Client
 	store      *redistore.RediStore
 	templates  *template.Template
 )
@@ -101,6 +100,7 @@ func Init(conf *config.Config, sdc *statsd.Client) error {
 	protected := r.PathPrefix("/").Subrouter()
 	protected.Use(MiddlewareRequireAuth)
 	protected.HandleFunc("/", GetHome).Methods("GET")
+	protected.HandleFunc("/admin/users", GetAdminUsers).Methods("GET")
 	protected.HandleFunc("/purgatory", GetPurgatory).Methods("GET")
 	protected.HandleFunc("/responder", GetResponder).Methods("GET")
 	protected.HandleFunc("/responder/add", GetResponderAdd).Methods("GET")

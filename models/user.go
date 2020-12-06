@@ -16,6 +16,13 @@ type User struct {
 	UpdatedAt time.Time `db:"updated_at",json:"updated_at"`
 }
 
+type UserListItem struct {
+	User
+
+	Administrator sql.NullString `db:"role_administrator",json:"role_administrator"`
+	Operator      sql.NullString `db:"role_operator",json:"role_operator"`
+}
+
 func (u *User) HasOneOfRoles(roles []string) (bool, error) {
 	roleCount, err := CountRolesByUserIDRoles(u.ID, roles)
 	if err != nil {
@@ -70,4 +77,25 @@ func ReadUserByEmail(e string) (*User, error) {
 	}
 
 	return &user, nil
+}
+
+func ReadUserListPage(index, count int) (*[]UserListItem, error) {
+	// Timing
+	defer stats.NewTiming().Send("ReadUserListPage")
+
+	var userlist []UserListItem
+
+	offset := index * count
+	err := client.Select(&userlist, "SELECT u.id, u.email, u.nick, r_a.name as role_administrator, "+
+		"r_o.name as role_operator FROM users as u "+
+		"INNER JOIN user_roles as ur ON (u.id = ur.user_id) "+
+		"LEFT JOIN roles as r_a ON (ur.role_id = r_a.id AND r_a.name = 'administrator') "+
+		"LEFT JOIN roles as r_o ON (ur.role_id = r_o.id AND r_o.name = 'operator') "+
+		"ORDER BY u.email LIMIT $1 OFFSET $2;",
+		count, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	return &userlist, nil
 }

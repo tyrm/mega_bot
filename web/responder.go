@@ -8,7 +8,6 @@ import (
 	"mega_bot/models"
 	"mega_bot/responder"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -62,41 +61,13 @@ func GetResponder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get display count
-	displayCount := 20
-	hrefCount := 0
-	if qCount, ok := r.URL.Query()["count"]; ok {
-		if len(qCount[0]) >= 1 {
-			uCount, err := strconv.ParseUint(qCount[0], 10, 32)
-			if err != nil {
-				logger.Debugf("invalid count: %s", qCount[0])
-			} else {
-				displayCount = int(uCount)
-				hrefCount = int(uCount)
-			}
-		}
-	}
-
-	pages := roundUp(float64(rmCount) / float64(displayCount))
-
-	// get display page
-	displayPage := 1
-	if qPage, ok := r.URL.Query()["page"]; ok {
-		if len(qPage[0]) >= 1 {
-			uPage, err := strconv.ParseUint(qPage[0], 10, 32)
-			if err != nil {
-				logger.Debugf("invalid page: %s", qPage[0])
-			} else {
-				displayPage = int(uPage)
-			}
-		}
-	}
+    pr := getPageFromURL(r, rmCount, 20)
 
 	// mage pagination
-	tmplVars.RMPagination = makePagination(displayPage, pages, "/responder", hrefCount)
+	tmplVars.RMPagination = makePagination(pr.CurrentPage, pr.Pages, "/responder", pr.HrefCount)
 
 	// get list of responders
-	rms, err := models.ReadResponderMatchersPage(displayPage-1, displayCount)
+	rms, err := models.ReadResponderMatchersPage(pr.CurrentPage-1, pr.DisplayCount)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -123,6 +94,7 @@ func GetResponder(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
 
 
 func GetResponderAdd(w http.ResponseWriter, r *http.Request) {

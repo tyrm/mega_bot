@@ -23,7 +23,7 @@ func worker(id int, c *chan *models.ResponderRequest) {
 				}
 
 				if atMe || req.DirectMessage || matcher.AlwaysRespond {
-					logger.Debugf("[%d] ending response to %s(%s). responder: %s", id, req.Service, req.ResponseTarget, matcher.ID)
+					logger.Debugf("[%d] sending response to %s(%s). responder: %s", id, req.Service, req.ResponseTarget, matcher.ID)
 					switch req.Service {
 					case "discord":
 						err := discord.SendMessage(matcher.Response, req.ResponseTarget)

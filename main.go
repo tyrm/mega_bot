@@ -67,7 +67,7 @@ func main() {
 		return
 	}
 
-	err = web.Init(conf)
+	err = web.Init(conf, sdc)
 	if err != nil {
 		logger.Errorf("unable to start webserver: %s", err.Error())
 		return
